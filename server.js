@@ -21,7 +21,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 // pre-configurations
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5005;
 const WS_PATH = '/ws';
 const USER_IMAGE_FOLDER = path.join(__dirname, 'user-iamges');
 const SYSTEM_IMAGE_FOLDER = path.join(__dirname, 'sys-images');
@@ -95,8 +95,8 @@ console.log(SYSTEM_IMAGE_FOLDER);
 // });
 
 // start https server
-serverS.listen(5002, (err) => {
-  console.log(err || `The HTTPS server is running on PORT: ${5002}\nThe WebSocket server is running on PORT: ${5002} with route '${WS_PATH}'`);
+serverS.listen(PORT, (err) => {
+  console.log(err || `The HTTPS server is running on PORT: ${PORT}\nThe WebSocket server is running on PORT: ${PORT} with route '${WS_PATH}'`);
 });
 
 
