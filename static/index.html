@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="js/socket.io.js"></script>
+  <script src="js/socket.js"></script>
+  <style>
+    p {
+      font-size: 12px; 
+    }
+  </style>
+  <title>Document</title>
+</head>
+<body id="body">
+  <p>Hello Websocket</p>
+  <form id="form">
+    <input type="text" id="text"/>
+    <button>send</button>
+  </form>
+  <script>    
+    /* DOM */
+    var body = document.getElementById('body');
+    // var ws = new WSCONNECTION('wss://localhost:5002/tunnel?token=asdasdqweqweqwasdasd&a=123', {
+    //   // reconnect: true,
+    //   interval: 5000,
+    //   protocol: 'magic'
+    // });
+    // ws.on('open', (e) => {
+    //   console.log('connected via on.');
+    // })
+    // ws.on('message', (e) => {
+    //   console.log(e);
+    //   var p = document.createElement('p');
+    //   p.innerText = "from Server: " + e.data;
+    //   body.appendChild(p);
+    // });
+    // var form = document.getElementById('form');
+    // var text = document.getElementById('text');
+    // text.focus();
+    // form.addEventListener('submit', function (e) {
+    //   e.preventDefault();
+    //   if (ws.readyState === 1) {
+    //     ws.send(text.value);
+    //     console.log('sending: ', text.value);
+    //   }
+    //   else console.log('no connection');
+    //   var p = document.createElement('p');
+    //   p.innerText = "from Browser: " + text.value;
+    //   body.appendChild(p);
+    //   text.value = '';
+    //   text.focus();
+    // });
+
+    // var ping = new WSCONNECTION('wss://localhost:5002', {
+    //   // reconnect: true,
+    //   interval: 5000,
+    //   protocol: 'pulse'
+    // });
+  
+
+    
+  </script>
+</body>
+</html>
