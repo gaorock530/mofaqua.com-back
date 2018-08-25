@@ -95,7 +95,7 @@ console.log(SYSTEM_IMAGE_FOLDER);
 // });
 
 // start https server
-serverS.listen(PORT, 'localhost', (err) => {
+serverS.listen(PORT, (err) => {
   console.log(err || `The HTTPS server is running on PORT: ${PORT}\nThe WebSocket server is running on PORT: ${PORT} with route '${WS_PATH}'`);
 });
 
@@ -117,3 +117,5 @@ function normal (filePath) {
 
 
 // sudo brew install ffmpeg --with-chromaprint --with-fdk-aac --with-fontconfig --with-freetype --with-frei0r --with-game-music-emu --with-libass --with-libbluray --with-libbs2b --with-libcaca --with-libgsm --with-libmodplug --with-librsvg --with-libsoxr --with-libssh --with-libvidstab --with-libvorbis --with-libvpx --with-opencore-amr --with-openh264 --with-openjpeg --with-openssl --with-opus --with-rtmpdump --with-rubberband --with-sdl2 --with-snappy --with-speex --with-srt --with-tesseract --with-theora --with-tools --with-two-lame --with-wavpack --with-webp --with-x265 --with-xz --with-zeromq --with-zimg --HEAD
+// exec NODE_ENV=production /usr/local/bin/node /root/node/mofaqua.com-back/server.js >> /var/log/node.log 2>&1
+// exec sudo -u root NODE_ENV=production /usr/local/bin/node /root/node/mofaqua.com-back/server.js >> /var/log/node.log 2>&1
