@@ -66,6 +66,7 @@ app.get('/', (req, res) => {
   res.status(200).send('index.html');
 })
 
+// handle user icon image request
 app.get('/images/thumbnails/:name/:file', (req, res) => {
   const name = req.params.file.split('.');
   const file = '/user-images/' + req.params.name + '/thumbnails/' + name[1] +'.'+ name[2];
@@ -76,6 +77,7 @@ app.get('/images/thumbnails/:name/:file', (req, res) => {
   }
 })
 
+// handle channel cover image request
 app.get('/images/channel-cover/:name/:file', (req, res) => {
   const name = req.params.file.split('.');
   const file = '/user-images/' + req.params.name + '/channel-cover/' + name[1] +'.'+ name[2];
@@ -89,11 +91,6 @@ app.get('/images/channel-cover/:name/:file', (req, res) => {
 
 console.log(USER_IMAGE_FOLDER);
 console.log(SYSTEM_IMAGE_FOLDER);
-
-// start http server
-// server.listen(PORT, (err) => {
-//   console.log(err || `The HTTP server is running on PORT: ${PORT}\nThe WebSocket server is running on PORT: ${PORT} with route '${WS_PATH}'`);
-// });
 
 // start https server
 serverS.listen(PORT, (err) => {
@@ -118,5 +115,4 @@ function normal (filePath) {
 
 
 // sudo brew install ffmpeg --with-chromaprint --with-fdk-aac --with-fontconfig --with-freetype --with-frei0r --with-game-music-emu --with-libass --with-libbluray --with-libbs2b --with-libcaca --with-libgsm --with-libmodplug --with-librsvg --with-libsoxr --with-libssh --with-libvidstab --with-libvorbis --with-libvpx --with-opencore-amr --with-openh264 --with-openjpeg --with-openssl --with-opus --with-rtmpdump --with-rubberband --with-sdl2 --with-snappy --with-speex --with-srt --with-tesseract --with-theora --with-tools --with-two-lame --with-wavpack --with-webp --with-x265 --with-xz --with-zeromq --with-zimg --HEAD
-// exec NODE_ENV=production /usr/local/bin/node /root/node/mofaqua.com-back/server.js >> /var/log/node.log 2>&1
-// exec sudo -u root NODE_ENV=production /usr/local/bin/node /root/node/mofaqua.com-back/server.js >> /var/log/node.log 2>&1
+// export NODE_ENV=production

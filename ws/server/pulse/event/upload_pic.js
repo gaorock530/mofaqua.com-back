@@ -2,8 +2,19 @@ const fs = require('fs');
 const path = require('path');
 const USER = require('../../../../models/users');
 const CHANNEL = require('../../../../models/channel');
-const {select, pre, fileExists} = require('../../../utils');
+const {select, pre} = require('../../../utils');
 const _ = require('lodash');
+
+/**
+ * @description handle uploading images, ALL incoming image file is in BASE64 encoding
+ * @type {up-pic}
+ * @external data.t imcoming data type: [up-pic]
+ * @external data.c image category [tn] user icon, [ch-cover] channel cover 
+ * @external data.n image name
+ * @external data.i data index 0,1,2... [-1] indicates finish
+ * @fires ['up-pic'] only for the connection
+ * @fires ['upd'] updates all other connections for the same user
+ */
 
 module.exports = async (socket, data, pulse) => {
   const basePath = path.normalize(path.join(__dirname, `../../../../user-images/${socket.UID}/`));
@@ -61,8 +72,6 @@ module.exports = async (socket, data, pulse) => {
       if (data.c === 'tn') {
         out = `${process.env.HOST}${process.env.PORT?':'+process.env.PORT:''}/images/thumbnails/${socket.UID}/${socket.writeFile[data.n].name}.thumbnail.jpeg`;
         upd_u = await USER.findOneAndUpdate({UID: socket.UID}, {pic: out}, {new: true});
-        // fs.writeFileSync(path_thumbnails + data.n, socket.files[data.n].data, 'base64');
-        // delete socket.files[data.n];
         // https://localhost:5002/images/thumbnails/cjl04o0j4000jq1fyr4wq91ri/cjl191xt900053h5heqaxlycw.jpeg
         upd_u = select(upd_u);
         upd_u = _.pick(upd_u, ['pic']);
