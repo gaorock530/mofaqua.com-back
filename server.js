@@ -10,7 +10,6 @@ require('./config');
 
 // load main frameworks
 const express = require('express');
-const Socket = require('socket.io');
 // load helper utils
 // const http = require('http');
 const path = require('path');
@@ -40,7 +39,7 @@ const serverS = https.createServer(options, app);
 // Start webwocket server
 require('./ws')(serverS);
 
-
+console.log(process.env.HOST, process.env.PORT);
 // configuration
 app.disable('etag').disable('x-powered-by');
 

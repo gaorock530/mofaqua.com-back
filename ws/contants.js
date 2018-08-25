@@ -15,6 +15,8 @@ const Origins = [
   'https://www.panda.tv',
   'https://localhost:5002',
   'http://localhost:3000',
+  'http://www.mofaqua.com',
+  'https://www.mofaqua.com',
   'http://mofaqua.com',
   'https://mofaqua.com'
 ];

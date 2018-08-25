@@ -11,9 +11,11 @@
       "http://localhost:3001", 
       "http://192.168.1.100:3001",
       "http://localhost:3000"
-    ]
+    ],
+    "HOST": "https://localhost"
   },
   "production": {
+    "PORT": 5005,
     "MONGODB_URI": "mongodb://magic:123456@localhost:27017/magic",
     "JWT_SECRET": "magicwillgetturelovein2018",
     "passSalt": "magicwillbethebestin2020",
@@ -27,6 +29,7 @@
       "https://mofaqua.com", 
       "https://yingxitech.com",
       "https://shadowstrike.tv"
-    ]
+    ],
+    "HOST": "https://websocket.mofaqua.com"
   }
 }
