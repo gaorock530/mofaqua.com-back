@@ -23,7 +23,7 @@ const cors = require('cors');
 // pre-configurations
 const PORT = process.env.PORT || 5005;
 const WS_PATH = '/ws';
-const USER_IMAGE_FOLDER = path.join(__dirname, 'user-iamges');
+const USER_IMAGE_FOLDER = path.join(__dirname, 'user-images');
 const SYSTEM_IMAGE_FOLDER = path.join(__dirname, 'sys-images');
 
 // assign apps
@@ -58,6 +58,8 @@ app.use((req, res, next) => {
   next();
 });
 
+if (!fs.existsSync(USER_IMAGE_FOLDER)) fs.mkdirSync(USER_IMAGE_FOLDER);
+if (!fs.existsSync(SYSTEM_IMAGE_FOLDER)) fs.mkdirSync(SYSTEM_IMAGE_FOLDER);
 
 
 // basic router
