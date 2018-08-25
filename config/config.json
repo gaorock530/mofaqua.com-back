@@ -15,7 +15,6 @@
     "HOST": "https://localhost"
   },
   "production": {
-    "PORT": 5005,
     "MONGODB_URI": "mongodb://magic:123456@localhost:27017/magic",
     "JWT_SECRET": "magicwillgetturelovein2018",
     "passSalt": "magicwillbethebestin2020",

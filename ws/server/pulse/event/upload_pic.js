@@ -59,7 +59,7 @@ module.exports = async (socket, data, pulse) => {
     let upd_u, out;
     try {
       if (data.c === 'tn') {
-        out = `${process.env.HOST}:${process.env.PORT}/images/thumbnails/${socket.UID}/${socket.writeFile[data.n].name}.thumbnail.jpeg`;
+        out = `${process.env.HOST}${process.env.PORT?':'+process.env.PORT:''}/images/thumbnails/${socket.UID}/${socket.writeFile[data.n].name}.thumbnail.jpeg`;
         upd_u = await USER.findOneAndUpdate({UID: socket.UID}, {pic: out}, {new: true});
         // fs.writeFileSync(path_thumbnails + data.n, socket.files[data.n].data, 'base64');
         // delete socket.files[data.n];
@@ -67,7 +67,7 @@ module.exports = async (socket, data, pulse) => {
         upd_u = select(upd_u);
         upd_u = _.pick(upd_u, ['pic']);
       } else if (data.c === 'ch-cover') {
-        out = `${process.env.HOST}:${process.env.PORT}/images/channel-cover/${socket.UID}/${socket.writeFile[data.n].name}.thumbnail.jpeg`;
+        out = `${process.env.HOST}${process.env.PORT?':'+process.env.PORT:''}/images/channel-cover/${socket.UID}/${socket.writeFile[data.n].name}.thumbnail.jpeg`;
         upd_u = await CHANNEL.findOneAndUpdate({UID: socket.UID}, {cover: out}, {new: true});
         upd_u = _.pick(upd_u, ['cover']);
       }
