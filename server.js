@@ -95,7 +95,7 @@ console.log(SYSTEM_IMAGE_FOLDER);
 // });
 
 // start https server
-serverS.listen(PORT, (err) => {
+serverS.listen(PORT, 'localhost', (err) => {
   console.log(err || `The HTTPS server is running on PORT: ${PORT}\nThe WebSocket server is running on PORT: ${PORT} with route '${WS_PATH}'`);
 });
 
