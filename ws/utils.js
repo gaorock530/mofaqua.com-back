@@ -54,7 +54,7 @@ function parseCookie (string) {
 }
 
 function select (obj) {
-  return _.pick(obj, ['UID', 'username', 'birthday', 'email', 'gender', 'phone', 'pic', 'address', 'seller', 'useableBalance', 'depositBalance', 'buyerLevel', 'buyerPoints', 'sellerLevel', 'sellerPoints']);
+  return _.pick(obj, ['UID', 'username', 'email', 'phone', 'pic', 'person']);
 }
 
 function userType (value) {

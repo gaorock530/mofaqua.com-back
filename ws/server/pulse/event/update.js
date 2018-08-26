@@ -8,10 +8,11 @@ module.exports = async (socket, data, pulse) => {
   if (!socket.UID) terminate(socket, 'Not login{2}.');
   if (!data.uid) return socket.send({t: 'upd', err: 'missing uid'});
   if (!data.o || typeof data.o !== 'object') return socket.send(pre({t: 'upd', err: 'wrong arguments.'}, socket.isBuffer));
+  let query = null;
   if (data.o.username) {
     try {
-      const upd_n = await USER.findOne({nameForCheck: data.o.username.toUpperCase()});
-      if(upd_n) return socket.send(pre({t: 'upd', err: '该用户名已被使用，请更换'}, socket.isBuffer));
+      query = await USER.findOne({nameForCheck: data.o.username.toUpperCase()});
+      if(query) return socket.send(pre({t: 'upd', err: '该用户名已被使用，请更换'}, socket.isBuffer));
       data.o.nameForCheck = data.o.username.toUpperCase();
     }catch(e) {
       console.log(e);
@@ -19,14 +20,14 @@ module.exports = async (socket, data, pulse) => {
     }
   }
   try {
-    let upd_u = await USER.findOneAndUpdate({UID: data.uid}, data.o, {new: true});
-    upd_u = select(upd_u);
-    upd_u = _.pick(upd_u, Object.keys(data.o));
-    // return socket.send(pre({t: 'upd', u: upd_u}));
+    query = await USER.findOneAndUpdate({UID: data.uid}, data.o, {new: true});
+    query = select(query);
+    query = _.pick(query, Object.keys(data.o));
+    // return socket.send(pre({t: 'upd', u: query}));
     pulse.clients.forEach(ws => {
       if (ws.UID === socket.UID) {
-        ws.user = {...ws.user, ...upd_u};
-        ws.send(pre({t: 'upd', u: upd_u}, socket.isBuffer));
+        ws.user = {...ws.user, ...query};
+        ws.send(pre({t: 'upd', u: query}, socket.isBuffer));
       }
     });
   }catch(e) {

@@ -24,9 +24,9 @@ module.exports = async (socket, data, pulse) => {
   let userForLogin;
   if (!isUserType) return socket.send(pre({t: 'login', err: 'user type error.'}, socket.isBuffer));
   if (isUserType === 'email') {
-    userForLogin = await USER.findOne({email: data.user.toUpperCase()});
+    userForLogin = await USER.findOne({'email.value': data.user.toUpperCase()});
   }else {
-    userForLogin = await USER.findOne({phone: data.user});
+    userForLogin = await USER.findOne({'phone.value': data.user});
   }
   if (!userForLogin) return socket.send(pre({t: 'login', err: 'user not found.'}, socket.isBuffer));
   // 2. compare password

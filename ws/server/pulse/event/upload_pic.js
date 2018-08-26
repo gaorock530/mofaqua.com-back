@@ -70,13 +70,13 @@ module.exports = async (socket, data, pulse) => {
     let upd_u, out;
     try {
       if (data.c === 'tn') {
-        out = `${process.env.HOST}${process.env.PORT?':'+process.env.PORT:''}/images/thumbnails/${socket.UID}/${socket.writeFile[data.n].name}.thumbnail.jpeg`;
+        out = `/images/thumbnails/${socket.UID}/${socket.writeFile[data.n].name}.thumbnail.jpeg`;
         upd_u = await USER.findOneAndUpdate({UID: socket.UID}, {pic: out}, {new: true});
         // https://localhost:5002/images/thumbnails/cjl04o0j4000jq1fyr4wq91ri/cjl191xt900053h5heqaxlycw.jpeg
         upd_u = select(upd_u);
         upd_u = _.pick(upd_u, ['pic']);
       } else if (data.c === 'ch-cover') {
-        out = `${process.env.HOST}${process.env.PORT?':'+process.env.PORT:''}/images/channel-cover/${socket.UID}/${socket.writeFile[data.n].name}.thumbnail.jpeg`;
+        out = `/images/channel-cover/${socket.UID}/${socket.writeFile[data.n].name}.thumbnail.jpeg`;
         upd_u = await CHANNEL.findOneAndUpdate({UID: socket.UID}, {cover: out}, {new: true});
         upd_u = _.pick(upd_u, ['cover']);
       }

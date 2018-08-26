@@ -18,56 +18,85 @@ const schema = new mongoose.Schema({
     unique: true,
     required: true
   },
-  username: { 
-    type: String,
-  },
-  nameForCheck: { type: String },
+  username: { type: String, trim: true},
+  nameForCheck: { type: String, uppercase: true, trim: true},
   password: { type: String, required: true },
-  birthday: {type: Date, default: null},
-  gender: {type: Boolean, default: null},
-  email: {type: String, unique: false},
-  phone: { 
-    type: String,
+  email: {
+    use: {type: Boolean, defalut: false},
+    value: {type: String, defalut: '', uppercase: true, trim: true}
+  },
+  phone: {
+    use: {type: Boolean, defalut: false},
+    value: {type: Number, defalut: 0, get: v => Math.floor(v)}
   },
   pic: {type: String, default: null},
   address: [
     {
-      recent: {type: Boolean, default: true},
+      recent: {type: Boolean, default: false},
       country: {type: String},
       state: {type: String},
       city: {type: String},
       district: {type: String},
-      street: {type: String},
       detail: {type: String},
       zip: {type: String}
     }
   ],
-  
+  verification: {
+    verified: {type: Boolean, defualt: false},
+    class: {type: String, defalut: 'id'},
+    name: {type: String, defualt: null},
+    no: {type: String, defalut: null},
+    gender: {type: Boolean, default: null},
+    dob: {type: Date, default: null},
+    location: {type: String, defalut: null},
+    phone: {type: String, defalut: null},
+    expires: {type: Date, defalut: null},
+  },
   /*-----------------------------------------------
     show other public feilds
   -------------------------------------------------*/ 
-  seller: { type: Boolean, default: false },
-  useableBalance: {type: Number, default: 0},
-  depositBalance: {type: Number, default: 0},
-  /*-----------------------------------------------
-    System feilds
-  -------------------------------------------------*/ 
-  registedDate: { type: Date, default: ConvertUTCTimeToLocalTime(true) },
-  registerClient: { type: String, default: '' },
-  lastVisit: {
-    client: { type: String, default: '' },
-    time: { type: Date, default: ConvertUTCTimeToLocalTime(true) }
-  },
-  
   /**
-   * @param {Number} authLevel 
+   * @param {Number} auth
    *   (0 - SELF)
    *    1 - USER
    *    2 - ADMIN
    *    3 - SUPER
    *    4 - OWNER
    */
-  authLevel: { type: String, default: 1 },
+  person: {
+    auth: { type: String, default: 1 },
+    level: {type: Number, defalut: 1, get: v => Math.floor(v)},
+    exp: {type: Number, defalut: 0, get: v => Math.floor(v)}
+  },
+  buyer: {
+    is: {type: Boolean, default: true},
+    level: {type: Number, defalut: 1, get: v => Math.floor(v)},
+    exp: {type: Number, defalut: 0, get: v => Math.floor(v)},
+    credit: {type: Number, defalut: 0, get: v => Math.floor(v)},
+  },
+  seller: {
+    is: {type: Boolean, default: false},
+    level: {type: Number, defalut: 1, get: v => Math.floor(v)},
+    exp: {type: Number, defalut: 0, get: v => Math.floor(v)},
+    credit: {type: Number, defalut: 0, get: v => Math.floor(v)},
+  },
+  balance: {
+    total: {type: Number, defalut: 0},
+    usable: {type: Number, defalut: 0}
+  },
+  /*-----------------------------------------------
+    System feilds
+  -------------------------------------------------*/ 
+  registerDetails: { 
+    ip: {type: String},
+    client: {type: String},
+    time: {type: Date, default: ConvertUTCTimeToLocalTime(true)}
+  },
+  lastVisit: {
+    ip: {type: String},
+    client: {type: String},
+    time: {type: Date, default: ConvertUTCTimeToLocalTime(true)}
+  },
   records: [
     { //{register, update, upgrade, downgrade, upSeller, downSeller}
       event: { type: String, required: true },
@@ -76,17 +105,19 @@ const schema = new mongoose.Schema({
       by: { type: String, required: true }
     }
   ],
+  /*-----------------------------------------------
+    login tokens
+  -------------------------------------------------*/   
   tokens: [
     {
+      loginTime: { type: Date, defalut: ConvertUTCTimeToLocalTime(true)},
+      location: {type: String, defalut: ''},
       access: { type: String, required: true },
       token: { type: String, required: true },
-      expires: { type: Number, required: true }
+      expires: { type: Date, required: true }
     }
   ],
-  buyerLevel: {type: Number, default: 1},
-  buyerPoints: {type: Number, default: 0},
-  sellerLevel: {type: Number, default: 1},
-  sellerPoints: {type: Number, default: 0},
+  
   /*-----------------------------------------------
     Optional feilds
   -------------------------------------------------*/   
@@ -118,7 +149,7 @@ const schema = new mongoose.Schema({
 schema.methods.generateAuthToken = function (ip, client, expires) {
   const user = this;
   // user access level - {USER, ADMIN(trade, topics), SUPER, OWNER}
-  const access = user.authLevel;
+  const access = user.person.auth;
   expires = expires?ConvertUTCTimeToLocalTime(true, false, expires):ConvertUTCTimeToLocalTime(true, false);
   if (!ip || !client) throw 'Missing....{ip, client}';
   // make hash value of IP + Client
@@ -129,8 +160,13 @@ schema.methods.generateAuthToken = function (ip, client, expires) {
     hash,                         // hash contains IP + Client: pKDcCf+HJX+vJLStdNPPgJp1RtVSiDLN3JM0KL7hSKQ
     expires                       // token expires timestamp: 1524618158943
   }, process.env.JWT_SECRET);
+
   // push Token with something into user Tokens Array
-  user.tokens.push({access, token, expires});
+  user.tokens.push({
+    loginTime: ConvertUTCTimeToLocalTime(true),
+    location: '',
+    access, token, expires
+  });
   // save user
   return user.save().then(() => {
     return token
@@ -213,17 +249,23 @@ schema.statics.verifyToken = async function (token, ip, client) {
 }
 
 
-
-
 // Pre 'save' middleware
 schema.pre('save', function (next) {
+  console.log('saving document');
   const user = this;
-  user.username = user.username || cuid();
-  user.phone = user.phone || cuid();
-  // Capitalize username for checking unique
-  user.nameForCheck = user.username?user.username.toUpperCase():cuid();
-  // Capitalize email for checking unique
-  user.email = user.email?user.email.toUpperCase():cuid();
+  if (user.isNew) {
+    if (!user.phone) user.phone = {use: false, value: 0};
+    if (!user.email) user.email = {use: false, value: ''};
+    user.verification.verified = false;
+    user.person = {level: 1, exp: 0};
+    user.buyer = {level: 1, exp: 0, credit: 1000};
+    user.seller = {level: 1, exp: 0, credit: 1000};
+    user.balance = {total: 0, usable: 0};
+  }
+  if (user.isModified('username')) {
+    // Capitalize username for checking unique
+    user.nameForCheck = user.username;
+  }
   // only save password when it's created or changed
   if (user.isModified('password')) {
     // hashing password using bcrypt with 10 rounds of salting (~10 hashes / sec)

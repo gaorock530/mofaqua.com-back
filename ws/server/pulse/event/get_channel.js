@@ -1,9 +1,8 @@
 
 const USER = require('../../../../models/users');
 const CHANNEL = require('../../../../models/channel');
-const cuid = require('cuid');
 const _ = require('lodash');
-const {select, pre, terminate, userType} = require('../../../utils');
+const {pre} = require('../../../utils');
 
 module.exports = async (socket, data) => {
   console.log('-------------use ch-get---------------');

@@ -42,12 +42,23 @@ const trackUser = Users();
   const newUserType = userType(data.v);
   // create new user
   try {
-    user  = await new USER({
+    user  = new USER({
       UID: cuid(),
-      [newUserType]: data.v,
+      [newUserType]: {
+        use: true,
+        value: data.v
+      },
       username: data.n,
-      password: data.s
-    })
+      password: data.s,
+      registerDetails: {
+        ip: '123.123.123.123',
+        client: 'mac pro'
+      },
+      lastVisit: {
+        ip: '123.123.123.123',
+        client: 'mac pro'
+      }
+    });
   }catch(e) {
     // error
     console.log(e);
