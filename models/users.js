@@ -76,6 +76,7 @@ const schema = new mongoose.Schema({
   },
   seller: {
     is: {type: Boolean, default: false},
+    shopID: {type: String, default: ''}, 
     level: {type: Number, defalut: 1, get: v => Math.floor(v)},
     exp: {type: Number, defalut: 0, get: v => Math.floor(v)},
     credit: {type: Number, defalut: 0, get: v => Math.floor(v)},
@@ -261,6 +262,7 @@ schema.pre('save', function (next) {
     user.buyer = {level: 1, exp: 0, credit: 1000};
     user.seller = {level: 1, exp: 0, credit: 1000};
     user.balance = {total: 0, usable: 0};
+    user.nameForCheck = user.username;
   }
   if (user.isModified('username')) {
     // Capitalize username for checking unique
