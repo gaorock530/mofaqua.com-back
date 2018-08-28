@@ -27,3 +27,9 @@
 - __`db.getSiblingDB()`__	_Return a reference to another database using this same connection without explicitly switching the current database. This allows for cross database queries._
 - __`db.getCollection("users").find().pretty()`__
 - __`db.getCollection("users").find().length()`__
+
+# Nginx
+- [proxy_read_timeout](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_read_timeout)
+__Syntax:__	_proxy_read_timeout time;_
+__Default:__ `proxy_read_timeout 60s;`
+__Context:__	http, server, location
