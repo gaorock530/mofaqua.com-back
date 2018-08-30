@@ -57,7 +57,8 @@ const event = {
   'upd': require('./event/update'),
   'up-pic': require('./event/upload_pic'),
   'ch-get': require('./event/get_channel'),             // get Channel info with user's info
-  'u-get': require('./event/get_user')
+  'u-get': require('./event/get_user'),
+  'put-id': require('./event/put_indentity'),
 };
 /**
  * @description message event handler, data processing API

@@ -42,10 +42,11 @@ const schema = new mongoose.Schema({
     }
   ],
   verification: {
-    verified: {type: Boolean, defualt: false},
-    class: {type: String, defalut: 'id'},
+    verified: {type: Number, defualt: 0}, // 0 - false, 1 - in-process, 2 - true
+    idPhotoA: {type: String, defualt: ''},
+    idPhotoB: {type: String, defualt: ''},
     name: {type: String, defualt: null},
-    no: {type: String, defalut: null},
+    idno: {type: String, defalut: null}, // id number
     gender: {type: Boolean, default: null},
     dob: {type: Date, default: null},
     location: {type: String, defalut: null},

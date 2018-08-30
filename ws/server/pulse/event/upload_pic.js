@@ -12,21 +12,28 @@ const _ = require('lodash');
  * @external data.c image category [tn] user icon, [ch-cover] channel cover 
  * @external data.n image name
  * @external data.i data index 0,1,2... [-1] indicates finish
+ * @external data.m MIME type
  * @fires ['up-pic'] only for the connection
  * @fires ['upd'] updates all other connections for the same user
  */
 
 module.exports = async (socket, data, pulse) => {
   const basePath = path.normalize(path.join(__dirname, `../../../../user-images/${socket.UID}/`));
+  // check params;
+  if (!data.n || !data.c || !data.m) return socket.send(pre({t: 'up-pic', err: '缺少必要参数，请稍后重试'}, socket.isBuffer));
   // stores file path;
   let write_path;
-  // check params;
-  if (!data.n || !data.c) return socket.send(pre({t: 'up-pic', err: '缺少必要参数，请稍后重试'}, socket.isBuffer));
+  let write_name = 'thumbnail.' + data.m;
   // check category
-  if (data.c === 'tn') {
-    write_path = path.join(basePath, 'thumbnails/');
-  }else if (data.c === 'ch-cover') {
+  if (data.c === 'tn') {  // for user icon thumbnails
+    write_path = path.join(basePath, 'icon/');
+  }else if (data.c === 'ch-cover') { // for channel banner cover
     write_path = path.join(basePath, 'channel-cover/');
+  }else if (data.c.match(/^id.+/)) { // for user indentity images
+    write_path = path.join(basePath, 'identity/');
+    write_name = data.c +'.'+ data.m;
+  }else {
+    return console.warn('wrong value of data.c');
   }
   // make directory
   if (!fs.existsSync(basePath)) fs.mkdirSync(basePath);
@@ -39,7 +46,7 @@ module.exports = async (socket, data, pulse) => {
     // socket.writeFile[data.n].frags = data.v;
     socket.writeFile[data.n].name = data.n;
     socket.writeFile[data.n].index = 0;
-    socket.writeFile[data.n].writeStream = fs.createWriteStream(write_path + 'thumbnail.jpeg', {
+    socket.writeFile[data.n].writeStream = fs.createWriteStream(write_path + write_name, {
       flag: 'r+', 
       encoding: 'base64', 
       autoClose: true, 
@@ -70,15 +77,20 @@ module.exports = async (socket, data, pulse) => {
     let upd_u, out;
     try {
       if (data.c === 'tn') {
-        out = `/images/thumbnails/${socket.UID}/${socket.writeFile[data.n].name}.thumbnail.jpeg`;
+        out = `/images/icon/${socket.UID}/${socket.writeFile[data.n].name}.${write_name}`;
         upd_u = await USER.findOneAndUpdate({UID: socket.UID}, {pic: out}, {new: true});
         // https://localhost:5002/images/thumbnails/cjl04o0j4000jq1fyr4wq91ri/cjl191xt900053h5heqaxlycw.jpeg
         upd_u = select(upd_u);
         upd_u = _.pick(upd_u, ['pic']);
       } else if (data.c === 'ch-cover') {
-        out = `/images/channel-cover/${socket.UID}/${socket.writeFile[data.n].name}.thumbnail.jpeg`;
+        out = `/images/channel-cover/${socket.UID}/${socket.writeFile[data.n].name}.${write_name}`;
         upd_u = await CHANNEL.findOneAndUpdate({UID: socket.UID}, {cover: out}, {new: true});
         upd_u = _.pick(upd_u, ['cover']);
+      } else if (data.c.match(/^id.+/)) {
+        out = `/images/identity/${socket.UID}/${socket.writeFile[data.n].name}.${write_name}`;
+        const cate = 'verification.idPhoto' + data.c.match(/(?<=id-).+/)[0].toUpperCase();
+        upd_u = await USER.findOneAndUpdate({UID: socket.UID}, {[cate]: out}, {new: true});
+        upd_u = _.pick(upd_u, ['verification']);
       }
       // update every connection for the same client
       pulse.clients.forEach(ws => {

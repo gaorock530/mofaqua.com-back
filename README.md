@@ -33,3 +33,7 @@
   - __Syntax:__	_proxy_read_timeout time;_
   - __Default:__ `proxy_read_timeout 60s;`
   - __Context:__	http, server, location
+
+# Node
+- `export NODE_ENV=production`
+

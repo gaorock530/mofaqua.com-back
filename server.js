@@ -57,6 +57,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// check basic folders for images, if not exist, create one at server start
 if (!fs.existsSync(USER_IMAGE_FOLDER)) fs.mkdirSync(USER_IMAGE_FOLDER);
 if (!fs.existsSync(SYSTEM_IMAGE_FOLDER)) fs.mkdirSync(SYSTEM_IMAGE_FOLDER);
 
@@ -67,9 +68,9 @@ app.get('/', (req, res) => {
 })
 
 // handle user icon image request
-app.get('/images/thumbnails/:name/:file', (req, res) => {
+app.get('/images/:category/:name/:file', (req, res) => {
   const name = req.params.file.split('.');
-  const file = '/user-images/' + req.params.name + '/thumbnails/' + name[1] +'.'+ name[2];
+  const file = `/user-images/${req.params.name}/${req.params.category}/${name[1]}.${name[2]}`;
   if (fileExists(file, 'file')) {
     res.status(200).sendFile(path.join(__dirname, file));
   } else {
@@ -78,15 +79,15 @@ app.get('/images/thumbnails/:name/:file', (req, res) => {
 })
 
 // handle channel cover image request
-app.get('/images/channel-cover/:name/:file', (req, res) => {
-  const name = req.params.file.split('.');
-  const file = '/user-images/' + req.params.name + '/channel-cover/' + name[1] +'.'+ name[2];
-  if (fileExists(file, 'file')) {
-    res.status(200).sendFile(path.join(__dirname, file));
-  } else {
-    res.status(404).send('no');
-  }
-})
+// app.get('/images/channel-cover/:name/:file', (req, res) => {
+//   const name = req.params.file.split('.');
+//   const file = '/user-images/' + req.params.name + '/channel-cover/' + name[1] +'.'+ name[2];
+//   if (fileExists(file, 'file')) {
+//     res.status(200).sendFile(path.join(__dirname, file));
+//   } else {
+//     res.status(404).send('no');
+//   }
+// })
 
 
 console.log(USER_IMAGE_FOLDER);
