@@ -116,7 +116,7 @@ function verifyClient (info, cb) {
   if (Origins.indexOf(info.origin) === -1) {
     result = false;
     code = 401;
-    headers = { 'Error-Code': 101 };
+    headers = { 'Error-Code': 1011 };
   };
 
   // const cookie = parseCookie(info.req.headers.cookie);

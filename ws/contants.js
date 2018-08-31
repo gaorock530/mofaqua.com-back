@@ -14,6 +14,7 @@
 const Origins = [
   'http://192.168.1.104:3000',
   'http://localhost:3000',
+  'http://localhost:5001',
   'http://www.mofaqua.com',
   'https://www.mofaqua.com',
   'http://mofaqua.com',
