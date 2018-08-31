@@ -12,7 +12,6 @@ const _ = require('lodash');
  * @external data.c image category [tn] user icon, [ch-cover] channel cover 
  * @external data.n image name
  * @external data.i data index 0,1,2... [-1] indicates finish
- * @external data.m MIME type
  * @fires ['up-pic'] only for the connection
  * @fires ['upd'] updates all other connections for the same user
  */
@@ -20,10 +19,10 @@ const _ = require('lodash');
 module.exports = async (socket, data, pulse) => {
   const basePath = path.normalize(path.join(__dirname, `../../../../user-images/${socket.UID}/`));
   // check params;
-  if (!data.n || !data.c || !data.m) return socket.send(pre({t: 'up-pic', err: '缺少必要参数，请稍后重试'}, socket.isBuffer));
+  if (!data.n || !data.c) return socket.send(pre({t: 'up-pic', err: '缺少必要参数，请稍后重试'}, socket.isBuffer));
   // stores file path;
   let write_path;
-  let write_name = 'thumbnail.' + data.m;
+  let write_name = 'thumbnail.jpeg';
   // check category
   if (data.c === 'tn') {  // for user icon thumbnails
     write_path = path.join(basePath, 'icon/');
@@ -36,7 +35,7 @@ module.exports = async (socket, data, pulse) => {
       return socket.send(pre({t: 'up-pic', err: '认证已经提交，更改无效'}, socket.isBuffer));
     }
     write_path = path.join(basePath, 'identity/');
-    write_name = data.c +'.'+ data.m;
+    write_name = data.c +'.jpeg';
   }else {
     return console.warn('wrong value of data.c');
   }
