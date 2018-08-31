@@ -36,4 +36,7 @@
 
 # Node
 - `export NODE_ENV=production`
+- `$ sudo vim /etc/environment`
+- Append the following at the end of the file: `NODE_ENV=production`
+- Now logout and login again and now we can see the system wide environment variable: `$ printenv | grep NODE_ENV`
 

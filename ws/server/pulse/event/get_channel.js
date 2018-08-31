@@ -4,6 +4,10 @@ const CHANNEL = require('../../../../models/channel');
 const _ = require('lodash');
 const {pre} = require('../../../utils');
 
+/**
+ * @param {UID} data.id
+ */
+
 module.exports = async (socket, data) => {
   console.log('-------------use ch-get---------------');
   try{

@@ -30,6 +30,11 @@ module.exports = async (socket, data, pulse) => {
   }else if (data.c === 'ch-cover') { // for channel banner cover
     write_path = path.join(basePath, 'channel-cover/');
   }else if (data.c.match(/^id.+/)) { // for user indentity images
+    // make sure identity to be updated has not been submitted.
+    const user = await USER.findOne({UID: socket.UID});
+    if (user.verification.verified > 0) {
+      return socket.send(pre({t: 'up-pic', err: '认证已经提交，更改无效'}, socket.isBuffer));
+    }
     write_path = path.join(basePath, 'identity/');
     write_name = data.c +'.'+ data.m;
   }else {

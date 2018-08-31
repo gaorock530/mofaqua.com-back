@@ -42,7 +42,10 @@ const schema = new mongoose.Schema({
     }
   ],
   verification: {
+    submit: {type: Date, defalut: null},
+    verifiedAt: {type: Date, defalut: null},
     verified: {type: Number, defualt: 0}, // 0 - false, 1 - in-process, 2 - true
+    by: {type: String, defalut: null},    // verified under whose authority {UID}
     idPhotoA: {type: String, defualt: ''},
     idPhotoB: {type: String, defualt: ''},
     name: {type: String, defualt: null},

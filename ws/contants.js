@@ -12,8 +12,7 @@
  * @param {Array} Origins stores all origins allowd to connect
  */
 const Origins = [
-  'https://www.panda.tv',
-  'https://localhost:5002',
+  'http://192.168.1.104:3000',
   'http://localhost:3000',
   'http://www.mofaqua.com',
   'https://www.mofaqua.com',
