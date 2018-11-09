@@ -6,7 +6,7 @@ module.exports = async (socket, data) => {
   console.log('-------------use u-get---------------');
   try{
     let user = await USER.findOne({UID: data.id});
-    user = _.pick(user, ['verification', 'buyer', 'seller', 'balance', 'address']);
+    user = _.pick(user, ['verification', 'buyer', 'seller', 'balance', 'address', 'magicCoin']);
     socket.send(pre({t: 'u-get', v: user}, socket.isBuffer));
     console.log(user);
   }catch(e) {

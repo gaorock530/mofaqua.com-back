@@ -8,6 +8,9 @@
 // load config.json
 require('./config');
 
+// database
+const System = require('./models/system');
+
 // load main frameworks
 const express = require('express');
 // load helper utils
@@ -16,6 +19,7 @@ const path = require('path');
 const https = require('https');
 const fs = require('fs');
 const bodyParser = require('body-parser');
+const axios = require('axios');
 // const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
@@ -63,8 +67,40 @@ if (!fs.existsSync(SYSTEM_IMAGE_FOLDER)) fs.mkdirSync(SYSTEM_IMAGE_FOLDER);
 
 
 // basic router
-app.get('/', (req, res) => {
-  res.status(200).send('index.html');
+app.get('/citylist', async (req, res) => {
+  let list;
+  try {
+    const data = await System.findOne().sort({'cityList.version': -1});
+    if (!data) {
+      const newdata = await axios({
+        method: 'get',
+        url: 'https://apis.map.qq.com/ws/district/v1/list?key=BBYBZ-2A66F-UDJJ2-NSWRG-VD3TZ-VSFE2&output=jsonp&callback=cb',
+        responseType: 'jsonp'
+      });
+      const listObj = JSON.parse(newdata.data.slice(7, newdata.data.length - 1));
+      const doc = new System({'cityList.list': listObj.result, 'cityList.version': listObj.data_version});
+      const saved = await doc.save();
+      list = saved.cityList.list;
+    } else {
+      list = data.cityList.list;
+    }
+    res.status(200).send(list);
+  }catch(e) {
+    console.log(e);
+    res.status(404).send(e);
+  }
+  
+
+  
+  // try {
+  //   const saved = await doc.save();
+  //   console.log(saved);
+  //   res.status(200).send('ok');
+  // }catch(e) {
+  //   console.log(e);
+  //   res.status(404).send(e);
+  // }
+  
 })
 
 // handle user icon image request

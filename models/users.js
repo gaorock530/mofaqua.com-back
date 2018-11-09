@@ -32,6 +32,7 @@ const schema = new mongoose.Schema({
   pic: {type: String, default: null},
   address: [
     {
+      id: {type: String, require: true},
       recent: {type: Boolean, default: false},
       country: {type: String},
       state: {type: String},
@@ -85,9 +86,14 @@ const schema = new mongoose.Schema({
     exp: {type: Number, defalut: 0, get: v => Math.floor(v)},
     credit: {type: Number, defalut: 0, get: v => Math.floor(v)},
   },
+  /* finance */
   balance: {
-    total: {type: Number, defalut: 0},
-    usable: {type: Number, defalut: 0}
+    total: {type: Number, defalut: 0, get: v => Math.floor(v)},
+    onhold: {type: Number, defalut: 0, get: v => Math.floor(v)}
+  },
+  magicCoin: {
+    total: {type: Number, defalut: 100, get: v => Math.floor(v)},
+    onhold: {type: Number, defalut: 100, get: v => Math.floor(v)}
   },
   /*-----------------------------------------------
     System feilds
@@ -265,7 +271,8 @@ schema.pre('save', function (next) {
     user.person = {level: 1, exp: 0};
     user.buyer = {level: 1, exp: 0, credit: 1000};
     user.seller = {level: 1, exp: 0, credit: 1000};
-    user.balance = {total: 0, usable: 0};
+    user.balance = {total: 0, onhold: 0};
+    user.magicCoin = {total: 100, onhold: 0};
     user.nameForCheck = user.username;
   }
   if (user.isModified('username')) {
