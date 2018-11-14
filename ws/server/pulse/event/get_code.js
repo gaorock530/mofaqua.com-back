@@ -27,7 +27,7 @@ const text = require('../../../../helper/text');
     if (!res) return socket.send(pre({t: 'code', err: '请检查邮箱是否填写正确'}, socket.isBuffer));
   }else if (data.p) {
     const res = await text(data.p, socket.code);
-    if (!res) return socket.send(pre({t: 'code', err: '请检查手机号是否填写正确'}, socket.isBuffer));
+    if (!res) return socket.send(pre({t: 'code', err: '请检查手机号是否填写正确, 或者验证码发送过于频繁, 请再1个小时后重试'}, socket.isBuffer));
   }
   socket.send(pre({t: 'code'}, socket.isBuffer));
  }

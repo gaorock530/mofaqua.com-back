@@ -8,12 +8,12 @@ const ConvertUTCTimeToLocalTime = require('../../../../helper/timezone');
  */
 
 module.exports = async (socket, data) => {
-  // console.log(socket.code);
-  // console.log(data);
+  console.log(socket.code);
+  console.log(data);
   if (!data.v.name || !data.v.phone || !data.v.code || !data.v.no) {
     return socket.send(pre({t: 'put-id', err: '缺少必要参数'}, socket.isBuffer));
   }
-  if (data.v.code.toString() !== socket.code.toString()) {
+  if (!socket.code || data.v.code.toString() !== socket.code.toString()) {
     return socket.send(pre({t: 'put-id', err: '手机验证码错误'}, socket.isBuffer));
   }
   try {

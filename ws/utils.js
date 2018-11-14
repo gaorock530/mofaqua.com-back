@@ -53,8 +53,28 @@ function parseCookie (string) {
   return cookie;
 }
 
-function select (obj) {
-  return _.pick(obj, ['UID', 'username', 'email', 'phone', 'pic', 'person']);
+function select (obj, isHide) {
+  const target = JSON.parse(JSON.stringify(obj));
+  target.secure = target.password.secure;
+  const hide = (v) => {
+    const idx = v.match(/@/)? v.match(/@/).index: null;
+    let out = '';
+    if (!idx) { // phone
+      out = v.slice(0, 3) + '*****' + v.slice(8);
+    } else { //email
+      const f = v.length - idx;
+      const s = Math.floor(f/2);  
+      out = v.slice(0, s) + v.slice(s, f).replace(/./g, '*') + v.slice(idx);
+    }
+    return out;
+  }
+
+  if (isHide) {
+    if (target.email) target.email = hide(target.email);
+    if (target.phone) target.phone = hide(target.phone);
+  }
+  
+  return _.pick(target, ['UID', 'username', 'email', 'phone', 'pic', 'person', 'secure']);
 }
 
 function userType (value) {

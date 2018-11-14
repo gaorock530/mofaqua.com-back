@@ -1,5 +1,5 @@
 'use strict';
-const {getIP, ab2str, terminate} = require('../../utils');
+const {getIP, ab2str, terminate, pre} = require('../../utils');
 // const ConvertUTCTimeToLocalTime = require('../../../helper/timezone');
 const WebSocket = require('ws');
 const {Origins, Users} = require('../../contants');
@@ -59,6 +59,11 @@ const event = {
   'ch-get': require('./event/get_channel'),             // get Channel info with user's info
   'u-get': require('./event/get_user'),
   'put-id': require('./event/put_indentity'),
+  // message
+  'msg-g': require('./event/msg_get'),
+  'msg-a': require('./event/msg_add'),
+  'msg-u': require('./event/msg_update'),
+  'msg-d': require('./event/msg_del'),
 };
 /**
  * @description message event handler, data processing API
@@ -82,8 +87,15 @@ async function onmessage (data) {
    * @arg {Object} data
    * @arg {WS Server} pulse
    */
-  await event[data.t](this, data, pulse);
-  console.log('[incoming data-type]: ', data.t);
+  if (~Object.keys(event).indexOf(data.t)) {
+    console.log('[incoming data-type]: ', data.t);
+    // console.log('[incoming data]: ', data);
+    await event[data.t](this, data, pulse);
+  } else {
+    this.send(pre({t: data.t, err: 'invalid events, system shut down'}, this.isBuffer));
+    this.close(4005, 'invalid events, system shut down');
+  }
+  
 }
 
 /**

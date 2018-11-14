@@ -4,6 +4,7 @@ const {select, pre, terminate} = require('../../../utils');
 
 
 module.exports = async (socket, data, pulse) => {
+  
   if (!socket.allowed) terminate(socket, 'Message not allowed{10}.');
   if (!socket.UID) terminate(socket, 'Not login{2}.');
   if (!data.uid) return socket.send({t: 'upd', err: 'missing uid'});
@@ -19,6 +20,7 @@ module.exports = async (socket, data, pulse) => {
       return socket.send(pre({t: 'upd', err: '服务器错误，请稍后重试'}, socket.isBuffer));
     }
   }
+  // return socket.send(pre({t: 'upd', u: data.o}, socket.isBuffer));
   try {
     query = await USER.findOneAndUpdate({UID: data.uid}, data.o, {new: true});
     query = select(query);

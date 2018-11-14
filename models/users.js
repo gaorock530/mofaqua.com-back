@@ -20,15 +20,12 @@ const schema = new mongoose.Schema({
   },
   username: { type: String, trim: true},
   nameForCheck: { type: String, uppercase: true, trim: true},
-  password: { type: String, required: true },
-  email: {
-    use: {type: Boolean, defalut: false},
-    value: {type: String, defalut: '', uppercase: true, trim: true}
+  password: {
+    value: { type: String, required: true },
+    secure: { type: Number, required: true} // 1,2,3
   },
-  phone: {
-    use: {type: Boolean, defalut: false},
-    value: {type: Number, defalut: 0, get: v => Math.floor(v)}
-  },
+  email: { type: String, defalut: '', uppercase: true, trim: true },
+  phone: { type: String, defalut: '', trim: true},
   pic: {type: String, default: null},
   address: [
     {
@@ -37,7 +34,7 @@ const schema = new mongoose.Schema({
       country: {type: String},
       state: {type: String},
       city: {type: String},
-      district: {type: String},
+      area: {type: String}, //district
       detail: {type: String},
       zip: {type: String}
     }
@@ -211,10 +208,10 @@ schema.methods.recordEvent = function (event, log, by) {
 
 
 schema.methods.verifyPassword = async function (password) {
-  console.log('verifyPassword 1.',this.password);
+  console.log('verifyPassword 1.', this.password);
   try {
-    const pass = await bcrypt.compare(password, this.password);
-    console.log('verifyPassword 2.',pass);
+    const pass = await bcrypt.compare(password, this.password.value);
+    console.log('verifyPassword 2.', pass);
     if (!pass) return false;
     return true;
   }catch(e) {
@@ -280,12 +277,12 @@ schema.pre('save', function (next) {
     user.nameForCheck = user.username;
   }
   // only save password when it's created or changed
-  if (user.isModified('password')) {
+  if (user.password.isModified('value')) {
     // hashing password using bcrypt with 10 rounds of salting (~10 hashes / sec)
     const salt = bcrypt.genSaltSync(10);
       // actual hashing 
-    const hash = bcrypt.hashSync(user.password, salt);
-    user.password = hash;
+    const hash = bcrypt.hashSync(user.password.value, salt);
+    user.password.value = hash;
   }
   next();
 });

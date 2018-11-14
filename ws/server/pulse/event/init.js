@@ -18,16 +18,17 @@ const trackUser = Users();
  *                   {t:'int', v:0}
  */
 module.exports = async (socket, data, pulse) => {
+  let userRes;
   if (data.h) { // hash
     socket.hash = md5(socket.ip + data.h);
     clearTimeout(socket.initial);
     socket.allowed = true;
     if (data.token) {
       // verify client 'isLogin'
-      const userRes = await USER.verifyToken(data.token, socket.ip, socket.hash);
+      userRes = await USER.verifyToken(data.token, socket.ip, socket.hash);
       if (userRes) {
         socket.UID = userRes.UID;
-        socket.user = select(userRes);
+        socket.user = select(userRes, false);
       }
     } 
     //initial user info for records
@@ -46,7 +47,7 @@ module.exports = async (socket, data, pulse) => {
    
     // send response to the client
     if (socket.UID) {
-      socket.send(pre({t: 'int', v:1, u: socket.user}, socket.isBuffer));
+      socket.send(pre({t: 'int', v:1, u: select(userRes, true)}, socket.isBuffer));
     }else {
       socket.send(pre({t: 'int', v:0}, socket.isBuffer));
     }

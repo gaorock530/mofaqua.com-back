@@ -34,7 +34,7 @@ const SYSTEM_IMAGE_FOLDER = path.join(__dirname, 'sys-images');
 const app = express();
 // create http server using Express app
 // const server = http.createServer(app);
-//create a Https server with options
+// create a Https server with options
 const options = {
   key: fs.readFileSync(path.join(__dirname, 'keys', 'key.pem')),
   cert: fs.readFileSync(path.join(__dirname, 'keys', 'cert.pem'))

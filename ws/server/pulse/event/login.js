@@ -16,6 +16,7 @@ const trackUser = Users();
  */
 
 module.exports = async (socket, data, pulse) => {
+  console.log('login')
   if (!socket.allowed) terminate(socket, 'Message not allowed{7}.');
   if (socket.UID) return socket.send(pre({err:'already logged in{2}.'}, socket.isBuffer));
   // authentication with database
@@ -24,9 +25,9 @@ module.exports = async (socket, data, pulse) => {
   let userForLogin;
   if (!isUserType) return socket.send(pre({t: 'login', err: 'user type error.'}, socket.isBuffer));
   if (isUserType === 'email') {
-    userForLogin = await USER.findOne({'email.value': data.user.toUpperCase()});
+    userForLogin = await USER.findOne({'email': data.user.toUpperCase()});
   }else {
-    userForLogin = await USER.findOne({'phone.value': data.user});
+    userForLogin = await USER.findOne({'phone': data.user});
   }
   if (!userForLogin) return socket.send(pre({t: 'login', err: 'user not found.'}, socket.isBuffer));
   // 2. compare password
@@ -43,7 +44,7 @@ module.exports = async (socket, data, pulse) => {
       ws.UID = userForLogin.UID;
       ws.token = newToken;
       ws.user = select(userForLogin);
-      ws.send(pre({t: 'login', u: ws.user, token: socket.token}, socket.isBuffer));
+      ws.send(pre({t: 'login', u: select(userForLogin, true), token: socket.token}, socket.isBuffer));
     }
   });
   // console.log('UID: ', socket.UID);
