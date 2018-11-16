@@ -31,6 +31,8 @@ const WsPath = [
   '/media',            // for media
 ];
 
+const frezzeTime = 1000*60*60*24; // 1 day
+
 /**
  * @param {Object} Users tracking every client
  */
@@ -38,9 +40,14 @@ const Users = function () {
   if (!(this instanceof Users)) return new Users();
   process.loginuser = process.loginuser || {};
   process.unknown = process.unknown || {};
-  Object.defineProperty(this, 'list', {
+  process.denger = process.denger || {};
+  return Object.defineProperty(this, 'list', {
     get: function() {
-      return {login: process.loginuser, unknown: process.unknown};
+      return {
+        login: process.loginuser, 
+        unknown: process.unknown, 
+        denger: process.denger
+      };
     }
   });
 };
@@ -88,11 +95,23 @@ Users.prototype.del = function (socket) {
   }
 }
 
+Users.prototype.dengerAdd = function (UID, hash) {
+  if (!process.denger[hash]) process.denger[hash] = {wrongTime: 0, type: 'hash', date: Date.now()};
+  if (UID && !process.denger[UID]) process.denger[UID] = {wrongTime: 0, type: 'UID', date: Date.now()};
+  if (process.denger[hash].wrongTime > 19) process.denger[hash].frezze = true;
+  return {UID: UID?++process.denger[UID].wrongTime:null, hash: ++process.denger[hash].wrongTime};
+}
+
+Users.prototype.dengerDel = function (hash) { // hash means UID|hash
+  if (process.denger[hash]) delete process.denger[hash];
+}
+
 
 
 module.exports = {
   Origins,
   WsPath,
+  frezzeTime,
   Users,
   bytesOut: 0,
   bytesIn: 0,

@@ -63,7 +63,7 @@ function select (obj, isHide) {
       out = v.slice(0, 3) + '*****' + v.slice(8);
     } else { //email
       const f = v.length - idx;
-      const s = Math.floor(f/2);  
+      const s = Math.ceil(f/2);  
       out = v.slice(0, s) + v.slice(s, f).replace(/./g, '*') + v.slice(idx);
     }
     return out;

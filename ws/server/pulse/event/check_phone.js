@@ -8,7 +8,7 @@ const {pre, terminate} = require('../../../utils');
  module.exports = async (socket, data) => {
   if (!socket.allowed) terminate(socket, 'Message not allowed{4}.');
   try {
-    const chk_p = await USER.findOne({'phone.value': data.v});
+    const chk_p = await USER.findOne({'phone': data.v});
     if(!chk_p) socket.send(pre({t: 'chk'}, socket.isBuffer));
     else socket.send(pre({t: 'chk', err: '该手机号已被注册，请更换'}, socket.isBuffer));
   }catch(e) {

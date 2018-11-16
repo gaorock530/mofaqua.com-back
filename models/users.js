@@ -220,11 +220,11 @@ schema.methods.verifyPassword = async function (password) {
   }
 }
 
-schema.statics.verifyToken = async function (token, ip, client) {
+schema.statics.verifyToken = async function (token = '', ip, client) {
   const users = this;
   try {
     // decode token into payload
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const payload = await jwt.verify(token, process.env.JWT_SECRET);
     // use payload info find user
     const user = await users.findOne({
       '_id': payload._id,
@@ -251,7 +251,7 @@ schema.statics.verifyToken = async function (token, ip, client) {
     }
     return user;
   }catch(e) {
-    console.log(e)
+    console.warn('error from user.js Catch(e)', e);
     return false;
   }
 }

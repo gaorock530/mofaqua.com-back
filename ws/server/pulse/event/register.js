@@ -25,14 +25,14 @@ const trackUser = Users();
    console.log('socket.field', socket.field);
   if (!socket.allowed) terminate(socket, 'Message not allowed{6}.');
   // check if socket action is allowed
-  if (!socket.code || !socket.expires_time || !socket.field) return socket.send(pre({t: 'rgt', err: 'warning: socket is not allowed!'}, socket.isBuffer));
+  if (!socket.code || !socket.expires_time || !socket.field) return socket.send(pre({t: 'rgt', err: '验证码错误或已过期'}, socket.isBuffer));
   // check user is logged in
   if (socket.UID) return socket.send('already logged in{1}.');
   // check arguments
   if (!data.v || !data.s) return socket.send(pre({t: 'rgt', err: 'missing phone number / email address or password.'}, socket.isBuffer));
   if (!data.c || !data.n) return socket.send(pre({t: 'rgt', err: 'missing authentication code / nickname.'}, socket.isBuffer));
   // check if the code is correct
-  if (data.c !== socket.code.toString()) return socket.send(pre({t: 'rgt', err: 'wrong authentication code.'}, socket.isBuffer));
+  if (data.c !== socket.code.toString()) return socket.send(pre({t: 'rgt', err: '验证码错误或已过期'}, socket.isBuffer));
   // check code expiration time
   if (Date.now() > socket.expires_time) return socket.send(pre({t: 'rgt', err: 'code expired!'}, socket.isBuffer));
   // check incoming value is the pre-registered field
@@ -44,12 +44,14 @@ const trackUser = Users();
   try {
     user  = new USER({
       UID: cuid(),
-      [newUserType]: {
-        use: true,
-        value: data.v
-      },
+      // phone / email
+      [newUserType]: data.v,
       username: data.n,
-      password: data.s,
+      // password contains 2 fields [secure, value]
+      password: {
+        secure: data.s.secure,
+        value: data.s.value
+      },
       registerDetails: {
         ip: '123.123.123.123',
         client: 'mac pro'
@@ -89,7 +91,7 @@ const trackUser = Users();
     if (ws.hash === socket.hash) {
       ws.UID = user.UID;
       ws.token = token;
-      ws.user = select(user);
+      ws.user = select(user, true);
       ws.send(pre({t: 'rgt', u: ws.user, token}, socket.isBuffer));
     }
   });

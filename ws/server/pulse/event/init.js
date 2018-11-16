@@ -1,4 +1,4 @@
-const {Users} = require('../../../contants');
+const {Users, frezzeTime} = require('../../../contants');
 const USER = require('../../../../models/users');
 const md5 = require('../../../../helper/md5').hex_md5;
 const {select, pre, terminate} = require('../../../utils');
@@ -21,9 +21,21 @@ module.exports = async (socket, data, pulse) => {
   let userRes;
   if (data.h) { // hash
     socket.hash = md5(socket.ip + data.h);
+    // if (trackUser)
+    console.log(trackUser.list.denger[socket.hash]);
+    if (trackUser.list.denger[socket.hash] && trackUser.list.denger[socket.hash].frezze) {
+      if (Date.now() - trackUser.list.denger[socket.hash].date > frezzeTime) {
+        trackUser.dengerDel(socket.hash);
+      } else {
+        socket.allowed = false;
+        return terminate(socket, `denger login actions: ${socket.ip}`);
+      }
+      
+    }
     clearTimeout(socket.initial);
     socket.allowed = true;
     if (data.token) {
+      console.log('has Token: ', data.token);
       // verify client 'isLogin'
       userRes = await USER.verifyToken(data.token, socket.ip, socket.hash);
       if (userRes) {
