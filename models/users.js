@@ -277,11 +277,13 @@ schema.pre('save', function (next) {
     user.nameForCheck = user.username;
   }
   // only save password when it's created or changed
-  if (user.password.isModified('value')) {
+  if (user.isModified('password.value')) {
+    console.log('saving password...')
     // hashing password using bcrypt with 10 rounds of salting (~10 hashes / sec)
     const salt = bcrypt.genSaltSync(10);
       // actual hashing 
     const hash = bcrypt.hashSync(user.password.value, salt);
+    console.log('saving password: ', hash)
     user.password.value = hash;
   }
   next();
