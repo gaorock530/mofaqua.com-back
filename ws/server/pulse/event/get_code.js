@@ -16,6 +16,7 @@ const text = require('../../../../helper/text');
   if (!data.e && !data.p) return socket.send({err: 'missing argument{e/p}'});
   // random 6 digits validation number
   socket.code = (Math.random()*(999999-100001+1)+100001) | 0;
+  console.log('new Code generated: ', socket.code, ' value: ', data.e || data.p);
   // set expiration
   let timeNow = new Date();
   timeNow.setMinutes(timeNow.getMinutes() + 10);

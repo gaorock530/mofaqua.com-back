@@ -7,6 +7,7 @@ const {pre, terminate} = require('../../../utils');
 
  module.exports = async (socket, data) => {
   if (!socket.allowed) terminate(socket, 'Message not allowed{4}.');
+  // determine value type [email|phone]
   try {
     const chk_p = await USER.findOne({'phone': data.v});
     if(!chk_p) socket.send(pre({t: 'chk'}, socket.isBuffer));

@@ -4,6 +4,7 @@ const USER = require('../../../../models/users');
 const CHANNEL = require('../../../../models/channel');
 const cuid = require('cuid');
 const {select, pre, terminate, userType} = require('../../../utils');
+const {checkPass} = require('../../../../helper/utils');
 const trackUser = Users();
 /**
  * @description user registration
@@ -24,33 +25,33 @@ const trackUser = Users();
    console.log('socket.code', socket.code);
    console.log('socket.field', socket.field);
   if (!socket.allowed) terminate(socket, 'Message not allowed{6}.');
-  // check if socket action is allowed
-  if (!socket.code || !socket.expires_time || !socket.field) return socket.send(pre({t: 'rgt', err: '验证码错误或已过期'}, socket.isBuffer));
   // check user is logged in
-  if (socket.UID) return socket.send('already logged in{1}.');
-  // check arguments
-  if (!data.v || !data.s) return socket.send(pre({t: 'rgt', err: 'missing phone number / email address or password.'}, socket.isBuffer));
-  if (!data.c || !data.n) return socket.send(pre({t: 'rgt', err: 'missing authentication code / nickname.'}, socket.isBuffer));
+  if (socket.UID) terminate(socket, 'already logged in{1}.');
+  // check if socket action is allowed
+  if (!socket.code || !socket.expires_time || !socket.field) return socket.send(pre({t: 'rgt', err: '请发送验证码'}, socket.isBuffer));
+  // check arguments / 'missing authentication code / nickname.' / 'missing phone number / email address or password.'
+  if (!data.o) return socket.send(pre({t: 'rgt', err: 'missing arguments'}, socket.isBuffer));
+  console.log(data.o);
   // check if the code is correct
-  if (data.c !== socket.code.toString()) return socket.send(pre({t: 'rgt', err: '验证码错误或已过期'}, socket.isBuffer));
+  if (data.o.code !== socket.code.toString()) return socket.send(pre({t: 'rgt', err: '验证码错误'}, socket.isBuffer));
   // check code expiration time
-  if (Date.now() > socket.expires_time) return socket.send(pre({t: 'rgt', err: 'code expired!'}, socket.isBuffer));
-  // check incoming value is the pre-registered field
-  if (socket.field !== data.v) return socket.send(pre({t: 'rgt', err: 'registration with a wrong email / phone number.'}, socket.isBuffer));
+  if (Date.now() > socket.expires_time) return socket.send(pre({t: 'rgt', err: '验证码已过期'}, socket.isBuffer));
+  // check incoming value is the pre-registered field / registration with a wrong email / phone number.
+  if (socket.field !== data.o.name.value) return socket.send(pre({t: 'rgt', err: '验证码已作废'}, socket.isBuffer));
   let user;
   // determine incoming value type
-  const newUserType = userType(data.v);
+  const newUserType = userType(data.o.name.value);
   // create new user
   try {
     user  = new USER({
       UID: cuid(),
       // phone / email
-      [newUserType]: data.v,
-      username: data.n,
+      [newUserType]: data.o.name.value,
+      username: data.o.nick,
       // password contains 2 fields [secure, value]
       password: {
-        secure: data.s.secure,
-        value: data.s.value
+        value: data.o.pass,
+        secure: checkPass(data.o.pass)
       },
       registerDetails: {
         ip: '123.123.123.123',
@@ -64,7 +65,7 @@ const trackUser = Users();
   }catch(e) {
     // error
     console.log(e);
-    return socket.send(pre({t: 'rgt', err: 'user save error{2}.'}, socket.isBuffer));
+    return socket.send(pre({t: 'rgt', err: '服务器错误，请稍后重试'}, socket.isBuffer));
   }
 
   // create channel

@@ -62,9 +62,9 @@ function select (obj, isHide) {
     if (!idx) { // phone
       out = v.slice(0, 3) + '*****' + v.slice(8);
     } else { //email
-      const f = v.length - idx;
-      const s = Math.ceil(f/2);  
-      out = v.slice(0, s) + v.slice(s, f).replace(/./g, '*') + v.slice(idx);
+      // const f = v.length - idx;
+      const s = Math.ceil(idx/2);  
+      out = v.slice(0, s) + v.slice(s, idx).replace(/./g, '*') + v.slice(idx);
     }
     return out;
   }
@@ -128,6 +128,8 @@ function pre (data, isBuffer) {
   console.log('bytesOut: ', bytesOut);
   return d;
 }
+
+
 
 module.exports = {
   parseCookie,

@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const validator = require('validator');
 const {hex_md5} = require('../helper/md5');
 const {b64_sha256} = require('../helper/sha256');
+const {checkPass} = require('../helper/utils');
 const _ = require('lodash');
 const ConvertUTCTimeToLocalTime = require('../helper/timezone');
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
@@ -24,7 +25,7 @@ const schema = new mongoose.Schema({
     value: { type: String, required: true },
     secure: { type: Number, required: true} // 1,2,3
   },
-  email: { type: String, defalut: '', uppercase: true, trim: true },
+  email: { type: String, defalut: '', lowercase: true, trim: true },
   phone: { type: String, defalut: '', trim: true},
   pic: {type: String, default: null},
   address: [
@@ -220,6 +221,13 @@ schema.methods.verifyPassword = async function (password) {
   }
 }
 
+schema.methods.updatePassword = async function (newpass) {
+  let user = this;
+  user.password.value = newpass;
+  user.password.secure = checkPass(newpass);
+  return user.save().then().catch(e => {throw e});
+}
+
 schema.statics.verifyToken = async function (token = '', ip, client) {
   const users = this;
   try {
@@ -262,20 +270,19 @@ schema.pre('save', function (next) {
   console.log('saving document');
   const user = this;
   if (user.isNew) {
-    if (!user.phone) user.phone = {use: false, value: 0};
-    if (!user.email) user.email = {use: false, value: ''};
     user.verification.verified = false;
     user.person = {level: 1, exp: 0};
     user.buyer = {level: 1, exp: 0, credit: 1000};
     user.seller = {level: 1, exp: 0, credit: 1000};
     user.balance = {total: 0, onhold: 0};
     user.magicCoin = {total: 100, onhold: 0};
-    user.nameForCheck = user.username;
+    // user.nameForCheck = user.username;
   }
   if (user.isModified('username')) {
     // Capitalize username for checking unique
     user.nameForCheck = user.username;
   }
+
   // only save password when it's created or changed
   if (user.isModified('password.value')) {
     console.log('saving password...')
