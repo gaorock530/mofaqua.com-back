@@ -1,3 +1,5 @@
 node_modules/
 user-images/
+sys-images/
+user-channel-data/
 .vscode/
