@@ -41,7 +41,7 @@
 - Now logout and login again and now we can see the system wide environment variable: `$ printenv | grep NODE_ENV`
 
 # FFmpeg
-- Compiling:
+- [Compiling](https://trac.ffmpeg.org/wiki/CompilationGuide/macOS):
 - Once you have compiled all of the codecs/libraries you want, you can now download the FFmpeg source either with Git or the from release tarball links on the website.
 - For general instructions on how to compile software, consult the Generic compilation guide. The information there is applicable to the macOS environment as well.
 - Run `./configure --help`, and study its output to learn what options are available. Make sure you've enabled all the features you want. Note that `--enable-nonfree` and `--enable-gpl` will be necessary for some of the dependencies above.
