@@ -114,6 +114,21 @@ app.get('/images/:category/:name/:file', (req, res) => {
   }
 })
 
+// handles video file request (out.mpd -> *.mp4)
+app.get('/videos/:dir/:file', (req, res) => {
+  console.log(req.params);
+  // :dir = uid + file
+  // "https://localhost:5000/videos/cjon0c9d20002xnfyp5de3vh8.cjot57gvj00068faqcl2104aa/cjot57gvj00068faqcl2104aa.mpd"
+  const uid = req.params.dir.split('.')[0];
+  const file = req.params.dir.split('.')[1];
+  const dir = `/user-channel-data/${uid}/manifest/${file}/${req.params.file}`
+  if (fileExists(dir, 'file')) {
+    res.status(200).sendFile(path.join(__dirname, dir));
+  } else {
+    res.status(404).send('no');
+  }
+})
+
 // handle channel cover image request
 // app.get('/images/channel-cover/:name/:file', (req, res) => {
 //   const name = req.params.file.split('.');

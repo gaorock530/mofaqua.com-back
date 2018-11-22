@@ -57,8 +57,9 @@ const event = {
   'logout': require('./event/logout'),
   'upd': require('./event/update'),
   'upd-p': require('./event/update_pass'),
-  'upd-pe': require('./event/update_pe'),            // update phone number || email
-  'up-pic': require('./event/upload_pic'),
+  'upd-pe': require('./event/update_pe'),               // update phone number || email
+  'up-pic': require('./event/upload_pic'),              // upload pic
+  'up-vod': require('./event/upload_video'),            // upload video
   'ch-get': require('./event/get_channel'),             // get Channel info with user's info
   'u-get': require('./event/get_user'),
   'put-id': require('./event/put_indentity'),
