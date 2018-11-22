@@ -233,7 +233,7 @@ function processVideo(UID, filename, analysed, source, destination) {
       console.log(`Video menifest in Directory: ${destination}/${filename}.mpd`);
       resolve({
         local: `${destination}/${filename}.mpd`,
-        server: `https://localhost:5000/videos/${UID}.${write_name}/${filename}.mpd`
+        server: `${process.env.HOST}/videos/${UID}.${write_name}/${filename}.mpd`
       });
     });
   })
