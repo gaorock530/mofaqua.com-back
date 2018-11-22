@@ -20,6 +20,7 @@ const _ = require('lodash');
 let basePath, write_path, manifestDir, write_name, ext, hash, fullname;
 
 module.exports = async (socket, data, pulse) => {
+  console.log('HOST', process.env.HOST)
   // console.log(data.i, data.h, data.e);
   if (!socket.allowed) terminate(socket, 'Message not allowed{10}.');
   if (!socket.UID) terminate(socket, 'Not login{2}.');
@@ -217,19 +218,19 @@ function analyseVideo (data) {
 function processVideo(UID, filename, analysed, source, destination) {
   const commend = `-re -y -i ${source} -seg_duration 2 -f dash ${destination}/${filename}.mpd`;
   // return console.log(commend);
-  const process = spawn('ffmpeg', commend.split(' '));
+  const processVideo = spawn('ffmpeg', commend.split(' '));
   console.log(analysed);
   return new Promise((resolve, reject) => {
-    process.stdout.on('data', (data) => {
+    processVideo.stdout.on('data', (data) => {
       console.log('generating video menifest ... ...');
     });
   
-    process.stderr.on('data', (data) => {
+    processVideo.stderr.on('data', (data) => {
       console.log(data.toString());
       // reject();
     });
   
-    process.on('exit', (code) => {
+    processVideo.on('exit', (code) => {
       console.log(`Video menifest in Directory: ${destination}/${filename}.mpd`);
       resolve({
         local: `${destination}/${filename}.mpd`,
