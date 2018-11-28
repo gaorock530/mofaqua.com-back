@@ -91,7 +91,7 @@ Users.prototype.del = function (socket) {
     if (Object.keys(process.loginuser[socket.UID]).length < 1) delete process.loginuser[socket.UID];
   } else {
     if (process.unknown[socket.hash] && process.unknown[socket.hash].connections.length <=1) delete process.unknown[socket.hash];
-    else process.unknown[socket.hash].connections.splice(process.unknown[socket.hash].connections.indexOf(socket.id), 1);
+    else if (process.unknown[socket.hash] && process.unknown[socket.hash].connections && process.unknown[socket.hash].connections.length > 1) process.unknown[socket.hash].connections.splice(process.unknown[socket.hash].connections.indexOf(socket.id), 1);
   }
 }
 

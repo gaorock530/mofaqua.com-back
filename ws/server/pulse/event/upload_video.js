@@ -135,6 +135,7 @@ async function getVideoInfo (path) {
     analyse.on('exit', (code) => {
       console.log(`Child exited with code ${code}`);
       const video = JSON.parse(output);
+      console.log(video);
       const meta = {
         video_codec: video.streams[0].codec_name,
         video_width: video.streams[0].width,
