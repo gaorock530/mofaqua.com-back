@@ -182,3 +182,18 @@ ffmpeg -y -i /Volumes/Elements/电影/Chasing.Coral.2017.1080p.WEBRip.x264-GH7JK
 ffmpeg -i /Volumes/Elements/电影/Chasing.Coral.2017.1080p.WEBRip.x264-GH7JKB6\[rarbg\]/chasing.coral.2017.1080p.webrip.x264-gh7jkb6.mkv -c:v libvpx-vp9 -pass 2 -b:v 8M -threads 8 -speed 1 \
   -tile-columns 6 -frame-parallel 1 -auto-alt-ref 1 -lag-in-frames 25 \
   -c:a libopus -b:a 128k -f webm Chasing.Coral-1080.webm
+
+
+ffmpeg -y -i video-bg.webm -threads 8 -ss 4 -t 15 -c:v libx264 -preset fast -b:v 2000k -vf scale=-1:720 video.mp4
+
+/*------------Gif--------------*/
+
+The standard way to use ffmpeg for GIFs is
+
+Generate a palette from the video
+
+`ffmpeg -y -i file.mp4 -vf palettegen palette.png`
+Then,
+
+`ffmpeg -y -i file.mp4 -i palette.png -filter_complex paletteuse -r 10 scale=-1:720 file.gif`
+  <!-- ffmpeg -y -i video-bg.webm -i palette.png -filter_complex paletteuse -ss 4 -t 15 -r 10 -s 480x320 file.gif -->

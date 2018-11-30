@@ -68,6 +68,8 @@ const event = {
   'msg-a': require('./event/msg_add'),
   'msg-u': require('./event/msg_update'),
   'msg-d': require('./event/msg_del'),
+  // permit
+  'g-p': require('./event/generatePermit'),
 };
 /**
  * @description message event handler, data processing API

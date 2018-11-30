@@ -24,8 +24,14 @@ const cors = require('cors');
 // pre-configurations
 const PORT = process.env.PORT || 5005;
 const WS_PATH = '/ws';
-const USER_IMAGE_FOLDER = path.join(__dirname, 'user-images');
-const SYSTEM_IMAGE_FOLDER = path.join(__dirname, 'sys-images');
+process.USER_IMAGE_FOLDER = path.join(__dirname, 'user-images');
+process.USER_VIDEO_FOLDER = path.join(__dirname, 'user-channel-data');
+process.SYSTEM_IMAGE_FOLDER = path.join(__dirname, 'sys-images');
+
+// check basic folders for images, if not exist, create one at server start
+if (!fs.existsSync(process.USER_IMAGE_FOLDER)) fs.mkdirSync(process.USER_IMAGE_FOLDER);
+if (!fs.existsSync(process.USER_VIDEO_FOLDER)) fs.mkdirSync(process.USER_VIDEO_FOLDER);
+if (!fs.existsSync(process.SYSTEM_IMAGE_FOLDER)) fs.mkdirSync(process.SYSTEM_IMAGE_FOLDER);
 
 // assign apps
 // create express app
@@ -61,9 +67,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// check basic folders for images, if not exist, create one at server start
-if (!fs.existsSync(USER_IMAGE_FOLDER)) fs.mkdirSync(USER_IMAGE_FOLDER);
-if (!fs.existsSync(SYSTEM_IMAGE_FOLDER)) fs.mkdirSync(SYSTEM_IMAGE_FOLDER);
+
 
 // https Router
 require('./httpsRouter')(app);
@@ -82,9 +86,6 @@ require('./httpsRouter')(app);
 // })
 
 
-
-console.log(USER_IMAGE_FOLDER);
-console.log(SYSTEM_IMAGE_FOLDER);
 
 // start https server
 serverS.listen(PORT, (err) => {
