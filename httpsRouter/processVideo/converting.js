@@ -8,6 +8,7 @@ module.exports = async (req, res, uid) => {
   // if (!process.videoUploadList[uid])
   try {
     index = convertingType.indexOf(process.videoUploadList[uid].analysed.type);
+    if (!~index) index = 0;
     // 3. convert video to its nearset format
     const converted = await convertVideo(
       process.videoUploadList[uid].uploadUrl, 
