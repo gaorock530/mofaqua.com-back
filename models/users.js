@@ -130,29 +130,27 @@ const schema = new mongoose.Schema({
   /*-----------------------------------------------
     Optional feilds
   -------------------------------------------------*/   
-  // transactions: [
-  //   { //{paid, cancelled, transport, received, done}
-  //     status: {type: String},
-  //     items: [
-  //       {
-  //         id: {type: String},
-  //         amount: {type: Number},
-  //         price: {type: Number}
-  //       }
-  //     ],
-  //     date: {type: Date},
-  //     transport: {
-  //       company: {type: String},
-  //       serialNo: {type: String}
-  //     },
-  //     feedback: {
-  //       stars: {type: Number},
-  //       message: {type: String}
-  //     }
-  //   }
-  // ]
+  // after upload(ed) a file, track unfinished video uploading and transcoding.
+  upload: [
+    {
+      date: {type: Date, required: true},     // record upload success timestamp
+      hash: {type: String, required: true},   // record file hash
+      stage: {type: Number, required: true},  // record upload stage 0-uploading 1-uploaded 2-converted 3-manifest 4-done
+      task_id: {type: String}                 // record task_id generated after file uploaded
+    }
+  ], 
+  // enter upload page
+  uploadMonitor: {
+    lastRequest: {type: Date, required: true},  // record last uploading request timestamp (detecting over requesting)
+    permit: {type: String, required: true},     // store a permit string for client upload
+    inProcess: {type: Boolean, required: true}
+  }
 }); 
 
+
+/**
+ * @description Class methods on USER
+ */
 
 // Class method for generate Token
 schema.methods.generateAuthToken = function (ip, client, expires) {
@@ -228,6 +226,28 @@ schema.methods.updatePassword = async function (newpass) {
   return user.save().then().catch(e => {throw e});
 }
 
+// make a new permit every 5 minutes
+schema.methods.generatePermit = async function () {
+  const user = this;
+  if (!user.uploadMonitor) user.uploadMonitor = {};
+  console.log(Date.now() - user.uploadMonitor.lastRequest);
+  if (!user.uploadMonitor.inProcess && (!user.uploadMonitor.lastRequest || Date.now() - user.uploadMonitor.lastRequest > 5*60*1000)) {
+    const permit = cuid();
+    user.uploadMonitor.lastRequest = Date.now();
+    user.uploadMonitor.permit = permit;
+    user.uploadMonitor.inProcess = false;
+    await user.save();
+    return permit;
+  } else {
+    return user.uploadMonitor.permit;
+  }
+}
+
+
+/**
+ * @description Static methods on USER
+ */
+
 schema.statics.verifyToken = async function (token = '', ip, client) {
   const users = this;
   try {
@@ -263,6 +283,8 @@ schema.statics.verifyToken = async function (token = '', ip, client) {
     return false;
   }
 }
+
+
 
 
 // Pre 'save' middleware

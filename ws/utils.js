@@ -2,6 +2,7 @@ let {bytesOut} = require('./contants');
 const validator = require('validator');
 const fs = require('fs');
 const _ = require('lodash');
+const useragent = require('useragent');
 
 /**
  * @description get ip address
@@ -10,7 +11,31 @@ const _ = require('lodash');
  */
 
 function getIP (req) {
-  return req.connection.remoteAddress || req.headers['x-forwarded-for'].split(/\s*,\s*/)[0];
+  return {
+    realIP: req.headers['x-real-ip'] || 'no proxy',
+    clientIP: req.connection.remoteAddress || req.headers['x-forwarded-for'].split(/\s*,\s*/)[0],
+    // clientIPn: req.header('x-forwarded-for') || req.connection.remoteAddress,
+  }
+}
+
+function getAgent (req) {
+  const agent = useragent.parse(req.headers['user-agent']);
+  let type;
+  //check if client broswer is IE and < 11
+  if (useragent.is(req.headers['user-agent']).ie && parseInt(agent.toVersion()) < 11){
+    type = 1;
+
+  //check if client is mobile device
+  }else if (/(android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|phone)/ig.test(agent.device.toString())) {
+    //res.render('mobile',{device: req.clientAgent.device.toString()});
+    type = 2;
+  //normal
+  } else if (/(iphone|ipad|ipod)/ig.test(agent.device.toString())) {
+    type = 3;
+  } else {
+    type = 0;
+  }
+  return {type, browser: agent.toAgent(), plateform: agent.os.toString(), device: agent.device.toString()}
 }
 
 
@@ -136,6 +161,7 @@ module.exports = {
   ab2str,
   str2ab,
   getIP,
+  getAgent,
   fileExists,
   normal,
   terminate,

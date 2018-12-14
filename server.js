@@ -51,7 +51,8 @@ require('./ws')(serverS);
 
 console.log(process.env.HOST, process.env.PORT);
 // configuration
-app.disable('etag').disable('x-powered-by');
+app.disable('etag');
+app.disable('x-powered-by');
 
 // middlewares
 app.use(express.static(path.join(__dirname, 'static')));
@@ -84,8 +85,10 @@ require('./httpsRouter')(app);
 //     res.status(404).send('no');
 //   }
 // })
-
-
+// const sha256 = require('./helper/sha256').b64_hmac_sha256;
+// const secretKey = 'Gu5t9xGARNpq86cd98joQYCN3Cozk1qA';
+// const srcStr = 'GETcvm.api.qcloud.com/v2/index.php?Action=DescribeInstances&InstanceIds.0=ins-09dx96dg&Nonce=11886&Region=ap-guangzhou&SecretId=AKIDz8krbsJ5yKBZQpn74WFkmLPx3gnPhESA&SignatureMethod=HmacSHA256&Timestamp=1465185768';
+// console.log('sha256', sha256(secretKey, srcStr));
 
 // start https server
 serverS.listen(PORT, (err) => {

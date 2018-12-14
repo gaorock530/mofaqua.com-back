@@ -1,8 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const { spawn } = require('child_process');
-const upload = require('express-fileupload');
-const cuid = require('cuid');
 const axios = require('axios');
 // database
 const System = require('../models/system');
@@ -31,18 +28,6 @@ module.exports = (app) => {
       console.log(e);
       res.status(404).send(e);
     }
-    
-
-    
-    // try {
-    //   const saved = await doc.save();
-    //   console.log(saved);
-    //   res.status(200).send('ok');
-    // }catch(e) {
-    //   console.log(e);
-    //   res.status(404).send(e);
-    // }
-    
   })
 
   // handle user icon image request
@@ -75,20 +60,7 @@ module.exports = (app) => {
     }
   })
 
-  // handle channel cover image request
-  // app.get('/images/channel-cover/:name/:file', (req, res) => {
-  //   const name = req.params.file.split('.');
-  //   const file = '/user-images/' + req.params.name + '/channel-cover/' + name[1] +'.'+ name[2];
-  //   if (fileExists(file, 'file')) {
-  //     res.status(200).sendFile(path.join(__dirname, file));
-  //   } else {
-  //     res.status(404).send('no');
-  //   }
-  // })
-// app.use(upload({
-//   limits: { fileSize: 50 * 1024 * 1024 }
-// }))
-require('./upload-video')(app);
+// require('./upload-video')(app); // not using this right new! instead of using Huawei transcoding service
 }  
 
 

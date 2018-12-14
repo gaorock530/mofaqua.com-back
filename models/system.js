@@ -3,8 +3,7 @@ const ConvertUTCTimeToLocalTime = require('../helper/timezone');
 
 const schema = new mongoose.Schema({ 
   cityList: {
-    list: {type: Array},
-    version: {type: Number},
+    list: {type: Array},  // city date
     updateAt: { type: Date, default: ConvertUTCTimeToLocalTime(true)}
   }
 });

@@ -7,7 +7,10 @@ const stage1 = require('./processVideo/uploading');
 const stage2 = require('./processVideo/converting');
 const stage3 = require('./processVideo/manifest');
 
-
+/**
+ * @description process uploading videos via FFmpeg
+ * @version 1.1 use this ONLY when server is good enough for transcoding videos (graphic card)
+ */
 // for tracking user video upload;
 process.videoUploadList = {}
 

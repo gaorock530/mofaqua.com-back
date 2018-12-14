@@ -1,11 +1,12 @@
 'use strict';
-const {getIP, ab2str, terminate, pre} = require('../../utils');
+const {getIP, getAgent, ab2str, terminate, pre} = require('../../utils');
 // const ConvertUTCTimeToLocalTime = require('../../../helper/timezone');
 const WebSocket = require('ws');
 const {Origins, Users} = require('../../contants');
 let {bytesIn} = require('../../contants');
 const cuid = require('cuid');
 const trackUser = Users();
+// const userinfo = require('../../../middleware/userinfo');
 const pulse = new WebSocket.Server({
   noServer: true,
   verifyClient,
@@ -25,6 +26,7 @@ const pulse = new WebSocket.Server({
 
 // ws.UID > ws.hash > ws.id
 pulse.on('connection', (ws, req) => {
+  ws.agent = getAgent(req);
   ws.initial = setTimeout(terminate.bind(ws, ws, 'Response too slow{1}.'), 2000);
   ws.id = cuid();
   ws.ip = getIP(req);

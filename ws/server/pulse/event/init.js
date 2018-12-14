@@ -3,6 +3,7 @@ const USER = require('../../../../models/users');
 const md5 = require('../../../../helper/md5').hex_md5;
 const {select, pre, terminate} = require('../../../utils');
 const trackUser = Users();
+
 /**
  * @description initial handshake and check the client authentication
  * @type {int}
@@ -18,6 +19,8 @@ const trackUser = Users();
  *                   {t:'int', v:0}
  */
 module.exports = async (socket, data, pulse) => {
+  console.log(socket.ip)
+  console.log(socket.agent);
   let userRes;
   if (data.h) { // hash
     socket.hash = md5(socket.ip + data.h);
@@ -59,9 +62,9 @@ module.exports = async (socket, data, pulse) => {
    
     // send response to the client
     if (socket.UID) {
-      socket.send(pre({t: 'int', v:1, u: select(userRes, true)}, socket.isBuffer));
+      socket.send(pre({t: 'int', v:1, u: select(userRes, true), a: socket.agent}, socket.isBuffer));
     }else {
-      socket.send(pre({t: 'int', v:0}, socket.isBuffer));
+      socket.send(pre({t: 'int', v:0, a: socket.agent}, socket.isBuffer));
     }
     console.log(trackUser.list);
   } else return terminate(socket, 'Invalid data value{1}.');
