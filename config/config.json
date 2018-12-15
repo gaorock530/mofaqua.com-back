@@ -15,7 +15,7 @@
     "HOST": "https://localhost:5000"
   },
   "production": {
-    "MONGODB_URI": "mongodb://magic:123456@139.159.161.189 :27017/magic",
+    "MONGODB_URI": "mongodb://magic:123456@139.159.161.189:27017/magic",
     "JWT_SECRET": "magicwillgetturelovein2018",
     "passSalt": "magicwillbethebestin2020",
     "EXPIRES_DAY": 7,
