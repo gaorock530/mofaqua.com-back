@@ -72,6 +72,11 @@ const event = {
   'msg-d': require('./event/msg_del'),
   // permit
   'g-p': require('./event/generatePermit'),
+  // get unfinished video uploads
+  'uv-get':require('./event/get_unfinished_videos'),
+  // publish
+  'pub-vod': require('./event/publish_video'),
+  'del-vod': require('./event/delete_video'),
 };
 /**
  * @description message event handler, data processing API

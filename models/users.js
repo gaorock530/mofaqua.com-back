@@ -133,7 +133,7 @@ const schema = new mongoose.Schema({
   // after upload(ed) a file, track unfinished video uploading and transcoding.
   upload: [
     {
-      date: {type: Date, required: true},     // record upload success timestamp
+      uploadDate: {type: Date, required: true},     // record upload success timestamp
       hash: {type: String, required: true},   // record file hash
       stage: {type: Number, required: true},  // record upload stage 0-uploading 1-uploaded 2-converted 3-manifest 4-done
       task_id: {type: String}                 // record task_id generated after file uploaded
@@ -267,7 +267,7 @@ schema.statics.verifyToken = async function (token = '', ip, client) {
     // check if token expires
     if (payload.expires < ConvertUTCTimeToLocalTime(true)) {
       //remove expired token
-      const cb = await user.update({ $pull: { tokens: {token} } });
+      const cb = await user.updateOne({ $pull: { tokens: {token} } });
       console.log({cb ,msg: 'token expired and will be removed'})
       return false; 
     }
