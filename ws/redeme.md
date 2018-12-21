@@ -1,4 +1,4 @@
-/*
+```
 IncomingMessage {
   _readableState: 
    ReadableState {
@@ -746,4 +746,4 @@ IncomingMessage {
   _consuming: false,
   _dumped: false,
   parser: null }
-*/
+```
