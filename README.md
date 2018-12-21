@@ -64,17 +64,19 @@ db.createUser(
 - Now logout and login again and now we can see the system wide environment variable: `$ printenv | grep NODE_ENV`
 
 # FFmpeg
-- [Compiling](https://trac.ffmpeg.org/wiki/CompilationGuide/macOS):
+#### [Compiling](https://trac.ffmpeg.org/wiki/CompilationGuide/macOS):
 - Once you have compiled all of the codecs/libraries you want, you can now download the FFmpeg source either with Git or the from release tarball links on the website.
 - For general instructions on how to compile software, consult the Generic compilation guide. The information there is applicable to the macOS environment as well.
 - Run `./configure --help`, and study its output to learn what options are available. Make sure you've enabled all the features you want. Note that `--enable-nonfree` and `--enable-gpl` will be necessary for some of the dependencies above.
 - A sample compilation command is:
 - `git clone http://source.ffmpeg.org/git/ffmpeg.git ffmpeg`
 - `cd ffmpeg`
-- ```./configure  --prefix=/usr/local --enable-gpl --enable-nonfree --enable-libass \
+```
+./configure  --prefix=/usr/local --enable-gpl --enable-nonfree --enable-libass \
 --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame \
 --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libopus --enable-libxvid \
---samples=fate-suite/```
+--samples=fate-suite/
+```
 - `make`
 - After successful compilation, running `sudo make install` will install the ffmpeg binaries with superuser rights. You can also set a prefix during configuration, e.g. `--prefix="$HOME/bin`, where no root rights are needed for `make install`.
 
@@ -147,7 +149,6 @@ PKG_CONFIG_PATH="/usr/lib/pkgconfig" \
 - [Gperf-3.0.4](http://www.linuxfromscratch.org/blfs/view/7.5/general/gperf.html)
 - [h265](https://trac.ffmpeg.org/wiki/Encode/H.265)
 - [libvpx-1.7.0](http://www.linuxfromscratch.org/blfs/view/8.2/multimedia/libvpx.html)
-- []
 
 ##### [FFmpeg / libav](https://developer.nvidia.com/ffmpeg)
 ##### [Install FFMPEG 2.8.6 support NVENC on Ubuntu 16.04](https://gist.github.com/jniltinho/96bb45bec18a90d0d33448ee67c28cc7)
@@ -158,6 +159,7 @@ PKG_CONFIG_PATH="/usr/lib/pkgconfig" \
 - `tar -xf file.tar.xz`   xz
 - `tar xvzf file.tar.gz`  gz
 
+#### examples:
 ```
 /Volumes/Elements/电影/Chasing.Coral.2017.1080p.WEBRip.x264-GH7JKB6\[rarbg\]/chasing.coral.2017.1080p.webrip.x264-gh7jkb6.mkv
 
@@ -219,7 +221,6 @@ ffmpeg -i /Volumes/Elements/电影/Chasing.Coral.2017.1080p.WEBRip.x264-GH7JKB6\
 
 
 ffmpeg -y -i video-bg.webm -threads 8 -ss 4 -t 15 -c:v libx264 -preset fast -b:v 2000k -vf scale=-1:720 video.mp4
-```
 
 /*------------Gif--------------*/
 
@@ -232,3 +233,5 @@ Then,
 
 `ffmpeg -y -i file.mp4 -i palette.png -filter_complex paletteuse -r 10 scale=-1:720 file.gif`
   <!-- ffmpeg -y -i video-bg.webm -i palette.png -filter_complex paletteuse -ss 4 -t 15 -r 10 -s 480x320 file.gif -->
+
+```
