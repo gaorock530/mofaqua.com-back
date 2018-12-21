@@ -154,11 +154,6 @@ PKG_CONFIG_PATH="/usr/lib/pkgconfig" \
 ##### [Install FFMPEG 2.8.6 support NVENC on Ubuntu 16.04](https://gist.github.com/jniltinho/96bb45bec18a90d0d33448ee67c28cc7)
 ##### [ERROR: cuvid requested, but not all dependencies are satisfied: cuda/ffnvcodec](https://superuser.com/questions/1299064/error-cuvid-requested-but-not-all-dependencies-are-satisfied-cuda-ffnvcodec)
 
-##### [tar](https://scottlinux.com/2014/01/07/extracting-or-uncompressing-tar-xz-files-in-linux/)
-- `sudo apt-get install xz-utils`
-- `tar -xf file.tar.xz`   xz
-- `tar xvzf file.tar.gz`  gz
-
 #### examples:
 ```
 /Volumes/Elements/电影/Chasing.Coral.2017.1080p.WEBRip.x264-GH7JKB6\[rarbg\]/chasing.coral.2017.1080p.webrip.x264-gh7jkb6.mkv
@@ -235,3 +230,8 @@ Then,
   <!-- ffmpeg -y -i video-bg.webm -i palette.png -filter_complex paletteuse -ss 4 -t 15 -r 10 -s 480x320 file.gif -->
 
 ```
+
+# [tar](https://scottlinux.com/2014/01/07/extracting-or-uncompressing-tar-xz-files-in-linux/)
+- `sudo apt-get install xz-utils`
+- `tar -xf file.tar.xz`   xz
+- `tar xvzf file.tar.gz`  gz
