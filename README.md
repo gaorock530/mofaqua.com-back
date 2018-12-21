@@ -40,6 +40,16 @@ db.createUser( {
   { w: "majority" , wtimeout: 5000 } 
 )
 ```
+```
+db.createUser(
+   {
+     user: "accountUser",
+     pwd: "password",
+     roles: [ "dbOwner", "dbAdmin" ]
+   }
+)
+```
+- __`db.dropUser("accountUser")`__
 
 # Nginx
 - [proxy_read_timeout](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_read_timeout)
