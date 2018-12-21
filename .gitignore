@@ -3,3 +3,4 @@ user-images/
 sys-images/
 user-channel-data/
 .vscode/
+package-lock.json

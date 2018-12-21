@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
+const obs = require('../helper/obs');
 // database
 const System = require('../models/system');
 
@@ -29,6 +30,8 @@ module.exports = (app) => {
       res.status(404).send(e);
     }
   })
+
+  
 
   // handle user icon image request
   app.get('/images/:category/:name/:file', (req, res) => {

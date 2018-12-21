@@ -52,7 +52,7 @@ module.exports = async (socket, data) => {
     // save video to Video model
     await new VIDEOS(newVideo).save()
     // delete video from User model
-    // await USER.updateOne({ $pull: { upload: {hash: data.video} } });
+    await USER.updateOne({ $pull: { upload: {hash: data.video} } });
 
 
     socket.send(pre({t: 'pub-vod'}, socket.isBuffer));

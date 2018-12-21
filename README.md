@@ -27,6 +27,15 @@
 - __`db.getSiblingDB()`__	_Return a reference to another database using this same connection without explicitly switching the current database. This allows for cross database queries._
 - __`db.getCollection("users").find().pretty()`__
 - __`db.getCollection("users").find().length()`__
+#### Create User
+- __`db.createUser()`__
+```db.createUser( { user: "accountAdmin01",
+                 pwd: "changeMe",
+                 customData: { employeeId: 12345 },
+                 roles: [ { role: "clusterAdmin", db: "admin" },
+                          { role: "readAnyDatabase", db: "admin" },
+                          "readWrite"] },
+               { w: "majority" , wtimeout: 5000 } )```
 
 # Nginx
 - [proxy_read_timeout](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_read_timeout)

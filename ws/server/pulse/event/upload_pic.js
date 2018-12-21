@@ -4,6 +4,7 @@ const USER = require('../../../../models/users');
 const CHANNEL = require('../../../../models/channel');
 const {select, pre} = require('../../../utils');
 const _ = require('lodash');
+const obs = require('../../../../helper/obs');
 
 /**
  * @description handle uploading images, ALL incoming image file is in BASE64 encoding
@@ -17,12 +18,12 @@ const _ = require('lodash');
  */
 
 module.exports = async (socket, data, pulse) => {
-  const basePath = path.normalize(path.join(__dirname, `../../../../user-images/${socket.UID}/`));
+  const basePath = path.normalize(path.join(__dirname, `../../../../user-images/`));
   // check params;
   if (!data.n || !data.c) return socket.send(pre({t: 'up-pic', err: '缺少必要参数，请稍后重试'}, socket.isBuffer));
   // stores file path;
   let write_path;
-  let write_name = 'thumbnail.jpeg';
+  let write_name = `${socket.UID}.jpg`;
   // check category
   if (data.c === 'tn') {  // for user icon thumbnails
     write_path = path.join(basePath, 'icon/');
@@ -35,7 +36,7 @@ module.exports = async (socket, data, pulse) => {
       return socket.send(pre({t: 'up-pic', err: '认证已经提交，更改无效'}, socket.isBuffer));
     }
     write_path = path.join(basePath, 'identity/');
-    write_name = data.c +'.jpeg';
+    write_name = data.c +'.'+ write_name;
   }else {
     return console.warn('wrong value of data.c');
   }
@@ -56,10 +57,9 @@ module.exports = async (socket, data, pulse) => {
       autoClose: true, 
       start: 0
     });
-    socket.writeFile[data.n].writeStream.on('close', (e) => {
-      if (socket.writeFile[data.n].finish) delete socket.writeFile[data.n];
-      console.log('uploading done.', socket.writeFile);
-    });
+    // socket.writeFile[data.n].writeStream.on('close', (e) => {
+    //   // console.log('uploading done.', socket.writeFile);
+    // });
   }
 
   if (data.i !== -1 && socket.writeFile[data.n].index === data.i) {
@@ -80,22 +80,49 @@ module.exports = async (socket, data, pulse) => {
     socket.writeFile[data.n].writeStream.end();
     let upd_u, out;
     try {
-      if (data.c === 'tn') {
-        out = `/images/icon/${socket.UID}/${socket.writeFile[data.n].name}.${write_name}`;
-        upd_u = await USER.findOneAndUpdate({UID: socket.UID}, {pic: out}, {new: true});
-        // https://localhost:5002/images/thumbnails/cjl04o0j4000jq1fyr4wq91ri/cjl191xt900053h5heqaxlycw.jpeg
-        upd_u = select(upd_u);
-        upd_u = _.pick(upd_u, ['pic']);
-      } else if (data.c === 'ch-cover') {
-        out = `/images/channel-cover/${socket.UID}/${socket.writeFile[data.n].name}.${write_name}`;
-        upd_u = await CHANNEL.findOneAndUpdate({UID: socket.UID}, {cover: out}, {new: true});
-        upd_u = _.pick(upd_u, ['cover']);
-      } else if (data.c.match(/^id.+/)) {
-        out = `/images/identity/${socket.UID}/${socket.writeFile[data.n].name}.${write_name}`;
-        const cate = 'verification.idPhoto' + data.c.match(/(?<=id-).+/)[0].toUpperCase();
-        upd_u = await USER.findOneAndUpdate({UID: socket.UID}, {[cate]: out}, {new: true});
-        upd_u = _.pick(upd_u, ['verification']);
+      switch (data.c) {
+        case 'tn':
+          out = socket.UID;
+          upd_u = await USER.findOneAndUpdate({UID: socket.UID}, {pic: socket.UID}, {new: true});
+          upd_u = select(upd_u);
+          upd_u = _.pick(upd_u, ['pic']);
+          // save pic to OBS
+          await obs.saveFile(`personal/thumbnail/${write_name}`, write_path + write_name);
+          // fs.unlink(write_path + write_name, () => {});
+          break;
+        case 'ch-cover':
+          out = `/images/channel-cover/${socket.UID}/${socket.writeFile[data.n].name}.${write_name}`;
+          upd_u = await CHANNEL.findOneAndUpdate({UID: socket.UID}, {cover: out}, {new: true});
+          upd_u = _.pick(upd_u, ['cover']);
+          break;
+        case 'id-a':
+        case 'id-b':
+          out = `${data.c}.${socket.UID}`;
+          const cate = 'verification.idPhoto' + data.c.match(/(?<=id-).+/)[0].toUpperCase();
+          upd_u = await USER.findOneAndUpdate({UID: socket.UID}, {[cate]: out}, {new: true});
+          upd_u = _.pick(upd_u, ['verification']);
+          break;
+        case 'vod':
+        default:
+
       }
+      if (socket.writeFile[data.n].finish) delete socket.writeFile[data.n];
+      // if (data.c === 'tn') {
+      //   out = `/images/icon/${socket.UID}/${socket.writeFile[data.n].name}.${write_name}`;
+      //   upd_u = await USER.findOneAndUpdate({UID: socket.UID}, {pic: out}, {new: true});
+      //   // https://localhost:5002/images/thumbnails/cjl04o0j4000jq1fyr4wq91ri/cjl191xt900053h5heqaxlycw.jpeg
+      //   upd_u = select(upd_u);
+      //   upd_u = _.pick(upd_u, ['pic']);
+      // } else if (data.c === 'ch-cover') {
+      //   out = `/images/channel-cover/${socket.UID}/${socket.writeFile[data.n].name}.${write_name}`;
+      //   upd_u = await CHANNEL.findOneAndUpdate({UID: socket.UID}, {cover: out}, {new: true});
+      //   upd_u = _.pick(upd_u, ['cover']);
+      // } else if (data.c.match(/^id.+/)) {
+      //   out = `/images/identity/${socket.UID}/${socket.writeFile[data.n].name}.${write_name}`;
+      //   const cate = 'verification.idPhoto' + data.c.match(/(?<=id-).+/)[0].toUpperCase();
+      //   upd_u = await USER.findOneAndUpdate({UID: socket.UID}, {[cate]: out}, {new: true});
+      //   upd_u = _.pick(upd_u, ['verification']);
+      // }
       // update every connection for the same client
       pulse.clients.forEach(ws => {
         if (ws.UID === socket.UID) {
