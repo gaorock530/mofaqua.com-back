@@ -235,3 +235,6 @@ Then,
 - `sudo apt-get install xz-utils`
 - `tar -xf file.tar.xz`   xz
 - `tar xvzf file.tar.gz`  gz
+
+# Markdown
+###### [document](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
